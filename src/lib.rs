@@ -32,8 +32,8 @@ impl UnaryBitOp {
         [!0, !0],
     ];
 
-    const fn output(self, input: u64) -> u64 {
-        input & Self::UNARY_BIT_OPS_TABLE[self as usize][(input != 0) as usize]
+    const fn output(self, input: u64, state: u64) -> u64 {
+        input & Self::UNARY_BIT_OPS_TABLE[self as usize][((input & state) != 0) as usize]
     }
 }
 
@@ -318,7 +318,7 @@ impl<const N: usize> Repr<N> {
         let index = (bit / u64::BITS) as usize;
         let bit = bit % u64::BITS;
         let mask = 1u64 << bit;
-        self.inner[index] = (self.inner[index] & !mask) | op.output(mask);
+        self.inner[index] = (self.inner[index] & !mask) | op.output(mask, self.inner[index]);
         self
     }
 

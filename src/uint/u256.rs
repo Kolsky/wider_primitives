@@ -1243,34 +1243,143 @@ impl u256 {
 
 /// # Bit manipulation
 impl u256 {
+    /// Returns the state of `i`th bit.
+    /// 
+    /// # Panics
+    /// 
+    #[doc = concat!("This function panics if <code>bit &gt;= <a href=\"struct.", typename!(), ".html#associatedconstant.BITS\" title=\"Self::BITS\">Self::BITS</a></code>.")]
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let uint = ", typename!(), "::from_u64;")]
+    ///
+    /// assert_eq!(uint(0b011001).bit(4), true);
+    /// assert_eq!(uint(0b011001).bit(5), false);
+    /// ```
     pub const fn bit(self, bit: u32) -> bool {
         self.inner.bit(bit)
     }
 
+    /// Returns the integer based of off `self` but with the `i`th bit set to 0.
+    /// 
+    /// # Panics
+    /// 
+    #[doc = concat!("This function panics if <code>bit &gt;= <a href=\"struct.", typename!(), ".html#associatedconstant.BITS\" title=\"Self::BITS\">Self::BITS</a></code>.")]
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let uint = ", typename!(), "::from_u64;")]
+    ///
+    /// assert_eq!(uint(0b011001).clear_bit(4), uint(0b001001));
+    /// assert_eq!(uint(0b011001).clear_bit(5), uint(0b011001));
+    /// ```
     pub const fn clear_bit(self, bit: u32) -> Self {
         Self { inner: self.inner.clear_bit(bit) }
     }
 
+    /// Flips the `i`th bit of `self`.
+    /// 
+    /// # Panics
+    /// 
+    #[doc = concat!("This function panics if <code>bit &gt;= <a href=\"struct.", typename!(), ".html#associatedconstant.BITS\" title=\"Self::BITS\">Self::BITS</a></code>.")]
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let uint = ", typename!(), "::from_u64;")]
+    ///
+    /// assert_eq!(uint(0b011001).toggle_bit(4), uint(0b001001));
+    /// assert_eq!(uint(0b011001).toggle_bit(5), uint(0b111001));
+    /// ```
     pub const fn toggle_bit(self, bit: u32) -> Self {
         Self { inner: self.inner.toggle_bit(bit) }
     }
 
+    /// Returns the integer based of off `self` but with the `i`th bit set to 1.
+    /// 
+    /// # Panics
+    /// 
+    #[doc = concat!("This function panics if <code>bit &gt;= <a href=\"struct.", typename!(), ".html#associatedconstant.BITS\" title=\"Self::BITS\">Self::BITS</a></code>.")]
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let uint = ", typename!(), "::from_u64;")]
+    ///
+    /// assert_eq!(uint(0b011001).set_bit(4), uint(0b011001));
+    /// assert_eq!(uint(0b011001).set_bit(5), uint(0b111001));
+    /// ```
     pub const fn set_bit(self, bit: u32) -> Self {
         Self { inner: self.inner.set_bit(bit) }
     }
 
+    /// Flips each bit of `self`.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let x = ", typename!(), "::from_u64(0b011001).not();")]
+    ///
+    /// assert!(!x.bit(0) && !x.bit(3) && !x.bit(4));
+    #[doc = concat!("assert!(x.bit(1) && x.bit(2) && (5..", typename!(), "::BITS).all(|i| x.bit(i)));")]
+    /// ```
     pub const fn not(self) -> Self {
         Self { inner: self.inner.not() }
     }
 
+    /// Computes bitwise `and` between `self` and `rhs`.
+    ///
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let uint = ", typename!(), "::from_u64;")]
+    /// 
+    /// assert_eq!(uint(0b011001).bitand(uint(0b110011)), uint(0b010001));
+    /// ```
     pub const fn bitand(self, rhs: Self) -> Self {
         Self { inner: self.inner.bitand(rhs.inner) }
     }
 
+    /// Computes bitwise `or` between `self` and `rhs`.
+    ///
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let uint = ", typename!(), "::from_u64;")]
+    /// 
+    /// assert_eq!(uint(0b011001).bitor(uint(0b110011)), uint(0b111011));
+    /// ```
     pub const fn bitor(self, rhs: Self) -> Self {
         Self { inner: self.inner.bitor(rhs.inner) }
     }
 
+    /// Computes bitwise `exclusive or` between `self` and `rhs`.
+    ///
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let uint = ", typename!(), "::from_u64;")]
+    /// 
+    /// assert_eq!(uint(0b011001).bitxor(uint(0b110011)), uint(0b101010));
+    /// ```
     pub const fn bitxor(self, rhs: Self) -> Self {
         Self { inner: self.inner.bitxor(rhs.inner) }
     }
