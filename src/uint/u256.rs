@@ -334,26 +334,104 @@ impl u256 {
 
 /// # Equality and comparison
 impl u256 {
+    /// Tests if `self == other`.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let (x, y) = (", typename!(), "::ZERO, ", typename!(), "::ONE);")]
+    /// 
+    /// assert!(x.equals(x));
+    /// assert!(!x.equals(y));
+    /// ```
     pub const fn equals(self, other: Self) -> bool {
         self.inner.equals(&other.inner)
     }
 
+    /// Returns an [`Ordering`](core::cmp::Ordering)
+    /// between `self` and `other`.
+    /// 
+    /// An implementation of a total comparison 
+    /// otherwise known as [`Ord`](core::cmp::Ord).
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// ```
+    /// # use wider_primitives::*;
+    /// use core::cmp::Ordering;
+    #[doc = concat!("let (x, y) = (", typename!(), "::ZERO, ", typename!(), "::ONE);")]
+    /// 
+    /// assert_eq!(x.compare(y), Ordering::Less);
+    /// assert_eq!(y.compare(y), Ordering::Equal);
+    /// assert_eq!(y.compare(x), Ordering::Greater);
+    /// ```
     pub const fn compare(self, other: Self) -> Ordering {
         self.inner.compare_unsigned(&other.inner)
     }
 
+    /// Shorthand for `self.compare(other).is_lt()`.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let (x, y) = (", typename!(), "::ZERO, ", typename!(), "::ONE);")]
+    /// 
+    /// assert!(x.lt(y));
+    /// ```
     pub const fn lt(self, other: Self) -> bool {
         self.compare(other).is_lt()
     }
 
+    /// Shorthand for `self.compare(other).is_gt()`.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let (x, y) = (", typename!(), "::ZERO, ", typename!(), "::ONE);")]
+    /// 
+    /// assert!(y.gt(x));
+    /// ```
     pub const fn gt(self, other: Self) -> bool {
         self.compare(other).is_gt()
     }
 
+    /// Shorthand for `self.compare(other).is_le()`.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let (x, y) = (", typename!(), "::ZERO, ", typename!(), "::ONE);")]
+    /// 
+    /// assert!(x.le(y));
+    /// assert!(y.le(y));
+    /// assert!(!y.le(x));
+    /// ```
     pub const fn le(self, other: Self) -> bool {
         self.compare(other).is_le()
     }
 
+    /// Shorthand for `self.compare(other).is_ge()`.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let (x, y) = (", typename!(), "::ZERO, ", typename!(), "::ONE);")]
+    /// 
+    /// assert!(!x.ge(y));
+    /// assert!(y.ge(y));
+    /// assert!(y.ge(x));
+    /// ```
     pub const fn ge(self, other: Self) -> bool {
         self.compare(other).is_ge()
     }
@@ -1029,6 +1107,20 @@ impl u256 {
         (self, rhs)
     }
 
+    /// Checked integer division and remainder. Computes `self.short_divrem(rhs)`,
+    /// returning `None` if `rhs == 0`.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let uint = ", typename!(), "::from_u64;")]
+    /// 
+    /// assert_eq!(uint(128).checked_short_divrem(2), Some((uint(64), 0)));
+    /// assert_eq!(uint(1).checked_short_divrem(0), None);
+    /// ```
     pub const fn checked_short_divrem(self, rhs: u64) -> Option<(Self, u64)> {
         match self.inner.checked_short_divrem_unsigned(rhs) {
             Some((quot, rem)) => Some((Self { inner: quot }, rem)),
@@ -1036,11 +1128,48 @@ impl u256 {
         }
     }
 
+    /// Calculates the division and remainder of `self` and `rhs`.
+    /// Slightly more efficient variant of `(self.div(rhs), self.rem(rhs))`
+    /// provided for convenience.
+    /// 
+    /// # Panics
+    /// 
+    /// This function will panic if `rhs` is 0.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let uint = ", typename!(), "::from_u64;")]
+    /// 
+    /// assert_eq!(uint(128).short_divrem(2), (uint(64), 0));
+    /// ```
+    /// ```should_panic
+    /// # use wider_primitives::*;
+    #[doc = concat!("let _ = ", typename!(), "::ONE.short_divrem(0);")]
     pub const fn short_divrem(self, rhs: u64) -> (Self, u64) {
         let (quot, rem) = self.inner.short_divrem_unsigned(rhs);
         (Self { inner: quot }, rem)
     }
 
+    /// Checked integer division and remainder. Computes `self.divrem(rhs)`,
+    /// returning `None` if `rhs == 0`.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let uint = ", typename!(), "::from_u64;")]
+    #[doc = concat!("let y = ", typename!(), "::MAX;")]
+    #[doc = concat!("let x = y.clear_bit(", typename!(), "::BITS - 1);")]
+    /// 
+    /// assert_eq!(y.checked_divrem(x), Some((uint(2), uint(1))));
+    /// assert_eq!(y.checked_divrem(uint(0)), None);
+    /// ```
     pub const fn checked_divrem(self, rhs: Self) -> Option<(Self, Self)> {
         match self.inner.checked_divrem_unsigned(rhs.inner) {
             Some((quot, rem)) => Some((Self { inner: quot }, Self { inner: rem })),
@@ -1048,6 +1177,27 @@ impl u256 {
         }
     }
 
+    /// Calculates the division and remainder of `self` and `rhs`.
+    /// Slightly more efficient variant of `(self.div(rhs), self.rem(rhs))`
+    /// provided for convenience.
+    /// 
+    /// # Panics
+    /// 
+    /// This function will panic if `rhs` is 0.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let uint = ", typename!(), "::from_u64;")]
+    /// 
+    /// assert_eq!(uint(8).divrem(uint(3)), (uint(2), uint(2)));
+    /// ```
+    /// ```should_panic
+    /// # use wider_primitives::*;
+    #[doc = concat!("let _ = ", typename!(), "::ONE.divrem(", typename!(), "::ZERO);")]
     pub const fn divrem(self, rhs: Self) -> (Self, Self) {
         let (quot, rem) = self.inner.divrem_unsigned(rhs.inner);
         (Self { inner: quot }, Self { inner: rem })
