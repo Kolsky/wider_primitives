@@ -133,10 +133,43 @@ impl u256 {
     /// ```
     pub const MAX: Self = Self { inner: Repr::MAX_UNSIGNED };
 
+    /// Constructs an integer from its inner representation,
+    /// which is a low-ordered array of words. The first element
+    /// of the array corresponds to the lowest 64 bits, the second
+    /// to bits 64..128, and so on.
+    /// 
+    /// If a word (u64) is little endian, then the type's endianess
+    /// would also be the same, but it doesn't hold in general case.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("assert!(",
+        typename!(), "::from_inner(", op_in!(swap_words), 
+        ").gt(",
+        typename!(), "::from_inner(", op_out!(swap_words),
+    ")));")]
+    /// ```
     pub const fn from_inner(inner: [u64; N]) -> Self {
         Self { inner: Repr::from_inner(inner) }
     }
 
+    /// Returns inner representation of `self`.
+    /// 
+    /// This function is an inverse of [`from_inner`](Self::from_inner).
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let swapped = ", typename!(), "::from_inner(", op_in!(swap_words), ").swap_words();")]
+    #[doc = concat!("assert_eq!(swapped.into_inner(), ", op_out!(swap_words), ");")]
+    /// ```
     pub const fn into_inner(self) -> [u64; N] {
         self.inner.into_inner()
     }
