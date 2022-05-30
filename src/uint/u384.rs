@@ -370,7 +370,7 @@ impl u384 {
     /// 
     /// ```
     /// # use wider_primitives::*;
-    #[doc = concat!("assert_eq!(", typename!(), "::MAX.as_u256(), u256::MAX);")]
+    #[doc = concat!("assert_eq!(", typename!(), "::MAX.as_u384(), u384::MAX);")]
     /// ```
     /// [numeric_cast]: <https://doc.rust-lang.org/reference/expressions/operator-expr.html#numeric-cast>
     pub const fn as_u384(self) -> u384 {
