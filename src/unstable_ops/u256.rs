@@ -5,6 +5,12 @@ use core::ops;
 use core::str;
 use crate::u256;
 
+impl const Default for u256 {
+    fn default() -> Self {
+        Self::ZERO
+    }
+}
+
 impl const cmp::PartialEq for u256 {
     fn eq(&self, other: &Self) -> bool {
         self.inner.equals(&other.inner)

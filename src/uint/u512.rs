@@ -80,7 +80,7 @@ macro_rules! op_out {
 #[allow(non_camel_case_types)]
 #[repr(transparent)]
 #[derive(Clone, Copy, Hash)]
-#[cfg_attr(stable, derive(PartialEq, Eq))]
+#[cfg_attr(stable, derive(PartialEq, Eq, Default))]
 #[doc = concat!("The ", typesize!(), "-bit unsigned integer type.")]
 /// 
 /// ## Table of contents

@@ -6,6 +6,12 @@ use core::str;
 use crate::u256;
 use crate::u384;
 
+impl const Default for u384 {
+    fn default() -> Self {
+        Self::ZERO
+    }
+}
+
 impl const cmp::PartialEq for u384 {
     fn eq(&self, other: &Self) -> bool {
         self.inner.equals(&other.inner)

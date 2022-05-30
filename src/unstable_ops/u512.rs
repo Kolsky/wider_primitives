@@ -7,6 +7,12 @@ use crate::u256;
 use crate::u384;
 use crate::u512;
 
+impl const Default for u512 {
+    fn default() -> Self {
+        Self::ZERO
+    }
+}
+
 impl const cmp::PartialEq for u512 {
     fn eq(&self, other: &Self) -> bool {
         self.inner.equals(&other.inner)
