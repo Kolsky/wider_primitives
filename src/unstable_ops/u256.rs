@@ -27,6 +27,37 @@ impl const cmp::Ord for u256 {
     fn cmp(&self, other: &Self) -> cmp::Ordering {
         self.inner.compare_unsigned(&other.inner)
     }
+
+    fn max(self, other: Self) -> Self {
+        if self < other {
+            other
+        }
+        else {
+            self
+        }
+    }
+
+    fn min(self, other: Self) -> Self {
+        if self > other {
+            other
+        }
+        else {
+            self
+        }
+    }
+
+    fn clamp(self, min: Self, max: Self) -> Self {
+        assert!(min <= max);
+        if self < min {
+            min
+        }
+        else if self > max {
+            max
+        }
+        else {
+            self
+        }
+    }
 }
 
 impl const ops::Add for &u256 {
