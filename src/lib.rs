@@ -1747,6 +1747,71 @@ pub fn fmt_signed<const N: usize>(this: &Repr<N>, f: &mut fmt::Formatter<'_>) ->
     fmt_unsigned(&this.unsigned_abs(), f)
 }
 
+#[cfg_attr(hide_internal, doc(hidden))]
+pub fn fmt_binary<const N: usize>(this: &Repr<N>, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    let mut past_zero = false;
+    let mut fmt = |val| {
+        past_zero |= val > 0;
+        match past_zero {
+            false => fmt::Binary::fmt(&val, f),
+            true => write!(f, "{val:064b}"),
+        }
+    };
+    this.inner.iter().rev().try_for_each(|&val| fmt(val))
+}
+
+#[cfg_attr(hide_internal, doc(hidden))]
+pub fn fmt_lower_hex<const N: usize>(this: &Repr<N>, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    let mut past_zero = false;
+    let mut fmt = |val| {
+        past_zero |= val > 0;
+        match past_zero {
+            false => fmt::LowerHex::fmt(&val, f),
+            true => write!(f, "{val:016x}"),
+        }
+    };
+    this.inner.iter().rev().try_for_each(|&val| fmt(val))
+}
+
+#[cfg_attr(hide_internal, doc(hidden))]
+pub fn fmt_upper_hex<const N: usize>(this: &Repr<N>, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    let mut past_zero = false;
+    let mut fmt = |val| {
+        past_zero |= val > 0;
+        match past_zero {
+            false => fmt::UpperHex::fmt(&val, f),
+            true => write!(f, "{val:016X}"),
+        }
+    };
+    this.inner.iter().rev().try_for_each(|&val| fmt(val))
+}
+
+#[cfg_attr(hide_internal, doc(hidden))]
+pub fn fmt_octal<const N: usize>(this: &Repr<N>, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    let chunks_exact = this.inner.chunks_exact(3);
+    let mut past_zero = false;
+    let mut fmt = |&[x, y, z]: &[u64; 3]| {
+        let lo = array_pair_to_u128([x, y]) & (u128::MAX >> 32);
+        let hi = array_pair_to_u128([y, z]) >> 32;
+        for val in [hi, lo] {
+            past_zero |= val > 0;
+            match past_zero {
+                false => fmt::Octal::fmt(&val, f)?,
+                true => write!(f, "{val:032o}")?,
+            }
+        }
+        Ok(())
+    };
+    match chunks_exact.remainder() {
+        [] => (),
+        &[x] => fmt(&[x, 0, 0])?,
+        &[x, y, ..] => fmt(&[x, y, 0])?,
+    }
+    chunks_exact.rev()
+        .filter_map(|chunk| chunk.try_into().ok())
+        .try_for_each(fmt)
+}
+
 impl<const N: usize> fmt::Debug for Repr<N> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         repr_fmt(self, f, |val, f| val.fmt(f))

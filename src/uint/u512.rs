@@ -100,6 +100,36 @@ impl fmt::Debug for u512 {
     }
 }
 
+impl fmt::Display for u512 {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        crate::fmt_unsigned(&self.inner, f)
+    }
+}
+
+impl fmt::Binary for u512 {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        crate::fmt_binary(&self.inner, f)
+    }
+}
+
+impl fmt::Octal for u512 {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        crate::fmt_octal(&self.inner, f)
+    }
+}
+
+impl fmt::LowerHex for u512 {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        crate::fmt_lower_hex(&self.inner, f)
+    }
+}
+
+impl fmt::UpperHex for u512 {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        crate::fmt_upper_hex(&self.inner, f)
+    }
+}
+
 /// # C3 (Constants, Constructors, Casts)
 impl u512 {
     /// The size of this integer type in bits.

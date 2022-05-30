@@ -100,6 +100,36 @@ impl fmt::Debug for u256 {
     }
 }
 
+impl fmt::Display for u256 {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        crate::fmt_unsigned(&self.inner, f)
+    }
+}
+
+impl fmt::Binary for u256 {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        crate::fmt_binary(&self.inner, f)
+    }
+}
+
+impl fmt::Octal for u256 {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        crate::fmt_octal(&self.inner, f)
+    }
+}
+
+impl fmt::LowerHex for u256 {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        crate::fmt_lower_hex(&self.inner, f)
+    }
+}
+
+impl fmt::UpperHex for u256 {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        crate::fmt_upper_hex(&self.inner, f)
+    }
+}
+
 /// # C3 (Constants, Constructors, Casts)
 impl u256 {
     /// The size of this integer type in bits.
