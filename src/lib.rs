@@ -1,4 +1,6 @@
 #![cfg_attr(not(test), no_std)]
+#![cfg_attr(unstable, feature(const_trait_impl))]
+#![cfg_attr(unstable, feature(structural_match))]
 
 use core::cmp::Ordering;
 use core::fmt;
