@@ -5,17 +5,17 @@ use crate::Repr;
 use crate::array_pair_to_u128;
 use crate::uint::*;
 
-const N: usize = 4;
+const N: usize = 6;
 
 macro_rules! typename {
     () => {
-        stringify!(u256)
+        stringify!(u384)
     };
 }
 
 macro_rules! typesize {
     () => {
-        256
+        384
     };
 }
 
@@ -27,24 +27,24 @@ macro_rules! min_value {
 
 macro_rules! max_value {
     () => {
-        "115792089237316195423570985008687907853269984665640564039457584007913129639935"
+        "39402006196394479212279040100143613805079739270465446667948293404245721771497210611414266254884915640806627990306815"
     };
 }
 
 macro_rules! op_in {
-    (rotate_left) => { stringify!([2, 3, 0, 1]) };
-    (rotate_right) => { stringify!([2, 4, 6, 0]) };
-    (swap_words) => { stringify!([1, 2, 3, 4]) };
-    (swap_bytes) => { stringify!("0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20") };
-    (reverse_bits) => { stringify!("1234567890123456789012345678901234567890123456789012345678901234") };
+    (rotate_left) => { stringify!([2, 3, 0, 0, 0, 1]) };
+    (rotate_right) => { stringify!([2, 4, 6, 0, 0, 0]) };
+    (swap_words) => { stringify!([1, 2, 3, 4, 5, 6]) };
+    (swap_bytes) => { stringify!("0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f30") };
+    (reverse_bits) => { stringify!("123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456") };
 }
 
 macro_rules! op_out {
-    (rotate_left) => { stringify!([2, 4, 6, 0]) };
-    (rotate_right) => { stringify!([2, 3, 0, 1]) };
-    (swap_words) => { stringify!([4, 3, 2, 1]) };
-    (swap_bytes) => { stringify!("201f1e1d1c1b1a191817161514131211100f0e0d0c0b0a090807060504030201") };
-    (reverse_bits) => { stringify!("2c48091e6a2c48091e6a2c48091e6a2c48091e6a2c48091e6a2c48091e6a2c48") };
+    (rotate_left) => { stringify!([2, 4, 6, 0, 0, 0]) };
+    (rotate_right) => { stringify!([2, 3, 0, 0, 0, 1]) };
+    (swap_words) => { stringify!([6, 5, 4, 3, 2, 1]) };
+    (swap_bytes) => { stringify!("302f2e2d2c2b2a292827262524232221201f1e1d1c1b1a191817161514131211100f0e0d0c0b0a090807060504030201") };
+    (reverse_bits) => { stringify!("6a2c48091e6a2c48091e6a2c48091e6a2c48091e6a2c48091e6a2c48091e6a2c48091e6a2c48091e6a2c48091e6a2c48") };
 }
 
 #[allow(non_camel_case_types)]
@@ -60,18 +60,18 @@ macro_rules! op_out {
 /// 3. [Basic arithmetic operations](#impl-2)
 /// 4. [Extended arithmetic operations](#impl-3)
 /// 5. [Bit manipulation](#impl-4)
-pub struct u256 {
+pub struct u384 {
     pub(crate) inner: Repr<N>,
 }
 
-impl fmt::Debug for u256 {
+impl fmt::Debug for u384 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         crate::debug_fmt(&self.inner, typename!(), f, |val, f| val.fmt(f))
     }
 }
 
 /// # C3 (Constants, Constructors, Casts)
-impl u256 {
+impl u384 {
     /// The size of this integer type in bits.
     /// 
     /// # Examples
@@ -244,7 +244,7 @@ impl u256 {
         Self { inner: Repr::from_u128(n) }
     }
 
-    /// Converts `self` to [`u384`](crate::u384), without the loss of precision.
+    #[doc = concat!("Constructs [`", typename!(), "`] from [`u256`], without the loss of precision.")]
     ///
     /// # Examples
     /// 
@@ -252,10 +252,10 @@ impl u256 {
     /// 
     /// ```
     /// # use wider_primitives::*;
-    #[doc = concat!("assert!(", typename!(), "::MAX.into_u384().lt(u384::MAX));")]
+    #[doc = concat!("assert!(", typename!(), "::from_u256(u256::MAX).lt(", typename!(), "::MAX));")]
     /// ```
-    pub const fn into_u384(self) -> u384 {
-        u384::from_inner(self.inner.as_cast_unsigned().into_inner())
+    pub const fn from_u256(n: u256) -> Self {
+        Self { inner: n.inner.as_cast_unsigned() }
     }
     
     /// Converts `self` to [`u512`](crate::u512), without the loss of precision.
@@ -359,7 +359,7 @@ impl u256 {
     /// ```
     /// [numeric_cast]: <https://doc.rust-lang.org/reference/expressions/operator-expr.html#numeric-cast>
     pub const fn as_u256(self) -> u256 {
-        self
+        u256 { inner: self.inner.as_cast_unsigned() }
     }
 
     /// Casts `self` to [`u384`](crate::u384) based on semantics explained in [The Rust Reference][numeric_cast].
@@ -370,11 +370,11 @@ impl u256 {
     /// 
     /// ```
     /// # use wider_primitives::*;
-    #[doc = concat!("assert!(", typename!(), "::MAX.as_u384().lt(u384::MAX));")]
+    #[doc = concat!("assert_eq!(", typename!(), "::MAX.as_u256(), u256::MAX);")]
     /// ```
     /// [numeric_cast]: <https://doc.rust-lang.org/reference/expressions/operator-expr.html#numeric-cast>
     pub const fn as_u384(self) -> u384 {
-        self.into_u384()
+        self
     }
 
     /// Casts `self` to [`u512`](crate::u512) based on semantics explained in [The Rust Reference][numeric_cast].
@@ -524,7 +524,7 @@ impl u256 {
 }
 
 /// # Equality and comparison
-impl u256 {
+impl u384 {
     /// Tests if `self == other`.
     /// 
     /// # Examples
@@ -629,7 +629,7 @@ impl u256 {
 }
 
 /// # Basic arithmetic operations
-impl u256 {
+impl u384 {
     /// Calculates `self + rhs`.
     /// 
     /// Returns a tuple of the addition along with a boolean indicating
@@ -1196,7 +1196,7 @@ impl u256 {
 }
 
 /// # Extended arithmetic operations
-impl u256 {
+impl u384 {
     /// Negates self in an overflowing fashion.
     ///
     /// Returns `!self + 1` using wrapping operations to return the value
@@ -1590,7 +1590,7 @@ impl u256 {
 }
 
 /// # Bit manipulation
-impl u256 {
+impl u384 {
     /// Returns the state of `i`th bit.
     /// 
     /// # Panics

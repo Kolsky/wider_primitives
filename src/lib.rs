@@ -10,7 +10,7 @@ pub mod uint;
 #[doc(inline)]
 pub use uint::u256;
 
-#[doc(hidden)]
+#[doc(inline)]
 pub use uint::u384;
 
 #[doc(hidden)]
