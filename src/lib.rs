@@ -1797,7 +1797,7 @@ pub fn fmt_octal<const N: usize>(this: &Repr<N>, f: &mut fmt::Formatter<'_>) -> 
             past_zero |= val > 0;
             match past_zero {
                 false => fmt::Octal::fmt(&val, f)?,
-                true => write!(f, "{val:032o}")?,
+                true => write!(f, "{val:096o}")?,
             }
         }
         Ok(())
