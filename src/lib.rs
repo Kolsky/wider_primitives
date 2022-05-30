@@ -19,6 +19,18 @@ pub use uint::u384;
 #[doc(inline)]
 pub use uint::u512;
 
+#[cfg_attr(hide_internal, doc(hidden))]
+pub mod int;
+
+#[doc(inline)]
+pub use int::i256;
+
+#[doc(hidden)]
+pub use int::i384;
+
+#[doc(hidden)]
+pub use int::i512;
+
 enum UnaryBitOp {
     Clear = 0,
     #[allow(unused)]

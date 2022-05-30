@@ -517,7 +517,7 @@ impl u256 {
     #[doc = concat!("assert_eq!(", typename!(), "::from_str(\"98765432109876543210\"), Ok(", typename!(), "::from_u128(98765432109876543210)));")]
     /// ```
     pub const fn from_str(src: &str) -> Result<Self, ParseIntError> {
-        match Repr::from_str_signed(src) {
+        match Repr::from_str_unsigned(src) {
             Ok(inner) => Ok(Self { inner }),
             Err(e) => Err(e),
         }
