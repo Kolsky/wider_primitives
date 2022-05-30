@@ -174,62 +174,220 @@ impl u256 {
         self.inner.into_inner()
     }
 
+    #[doc = concat!("Constructs [`", typename!(), "`] from [`u8`], without the loss of precision.")]
+    ///
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("assert!(", typename!(), "::from_u8(u8::MAX).lt(", typename!(), "::MAX));")]
+    /// ```
     pub const fn from_u8(n: u8) -> Self {
         Self::from_u64(n as u64)
     }
 
+    #[doc = concat!("Constructs [`", typename!(), "`] from [`u16`], without the loss of precision.")]
+    ///
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("assert!(", typename!(), "::from_u16(u16::MAX).lt(", typename!(), "::MAX));")]
+    /// ```
     pub const fn from_u16(n: u16) -> Self {
         Self::from_u64(n as u64)
     }
 
+    #[doc = concat!("Constructs [`", typename!(), "`] from [`u32`], without the loss of precision.")]
+    ///
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("assert!(", typename!(), "::from_u32(u32::MAX).lt(", typename!(), "::MAX));")]
+    /// ```
     pub const fn from_u32(n: u32) -> Self {
         Self::from_u64(n as u64)
     }
 
+    #[doc = concat!("Constructs [`", typename!(), "`] from [`u64`], without the loss of precision.")]
+    ///
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("assert!(", typename!(), "::from_u64(u64::MAX).lt(", typename!(), "::MAX));")]
+    /// ```
     pub const fn from_u64(n: u64) -> Self {
         Self { inner: Repr::from_u64(n) }
     }
 
+    #[doc = concat!("Constructs [`", typename!(), "`] from [`u128`], without the loss of precision.")]
+    ///
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("assert!(", typename!(), "::from_u128(u128::MAX).lt(", typename!(), "::MAX));")]
+    /// ```
     pub const fn from_u128(n: u128) -> Self {
         Self { inner: Repr::from_u128(n) }
     }
 
+    /// Converts `self` to [`u384`](crate::u384), without the loss of precision.
+    ///
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("assert!(", typename!(), "::MAX.into_u384().lt(u384::MAX));")]
+    /// ```
     pub const fn into_u384(self) -> u384 {
         u384::from_inner(self.inner.as_cast_unsigned().into_inner())
     }
     
+    /// Converts `self` to [`u512`](crate::u512), without the loss of precision.
+    ///
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("assert!(", typename!(), "::MAX.into_u512().lt(u512::MAX));")]
+    /// ```
     pub const fn into_u512(self) -> u512 {
         u512::from_inner(self.inner.as_cast_unsigned().into_inner())
     }
 
+    /// Casts `self` to [`u8`] based on semantics explained in [The Rust Reference][numeric_cast].
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("assert_eq!(", typename!(), "::MAX.as_u8(), u8::MAX);")]
+    /// ```
+    /// [numeric_cast]: <https://doc.rust-lang.org/reference/expressions/operator-expr.html#numeric-cast>
     pub const fn as_u8(self) -> u8 {
         self.inner.as_u64() as u8
     }
 
+    /// Casts `self` to [`u16`] based on semantics explained in [The Rust Reference][numeric_cast].
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("assert_eq!(", typename!(), "::MAX.as_u16(), u16::MAX);")]
+    /// ```
+    /// [numeric_cast]: <https://doc.rust-lang.org/reference/expressions/operator-expr.html#numeric-cast>
     pub const fn as_u16(self) -> u16 {
         self.inner.as_u64() as u16
     }
 
+    /// Casts `self` to [`u32`] based on semantics explained in [The Rust Reference][numeric_cast].
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("assert_eq!(", typename!(), "::MAX.as_u32(), u32::MAX);")]
+    /// ```
+    /// [numeric_cast]: <https://doc.rust-lang.org/reference/expressions/operator-expr.html#numeric-cast>
     pub const fn as_u32(self) -> u32 {
         self.inner.as_u64() as u32
     }
 
+    /// Casts `self` to [`u64`] based on semantics explained in [The Rust Reference][numeric_cast].
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("assert_eq!(", typename!(), "::MAX.as_u64(), u64::MAX);")]
+    /// ```
+    /// [numeric_cast]: <https://doc.rust-lang.org/reference/expressions/operator-expr.html#numeric-cast>
     pub const fn as_u64(self) -> u64 {
         self.inner.as_u64()
     }
 
+    /// Casts `self` to [`u128`] based on semantics explained in [The Rust Reference][numeric_cast].
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("assert_eq!(", typename!(), "::MAX.as_u128(), u128::MAX);")]
+    /// ```
+    /// [numeric_cast]: <https://doc.rust-lang.org/reference/expressions/operator-expr.html#numeric-cast>
     pub const fn as_u128(self) -> u128 {
         array_pair_to_u128(self.inner.as_cast_unsigned().into_inner())
     }
 
+    /// Casts `self` to [`u256`](crate::u256) based on semantics explained in [The Rust Reference][numeric_cast].
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("assert_eq!(", typename!(), "::MAX.as_u256(), u256::MAX);")]
+    /// ```
+    /// [numeric_cast]: <https://doc.rust-lang.org/reference/expressions/operator-expr.html#numeric-cast>
     pub const fn as_u256(self) -> u256 {
         self
     }
 
+    /// Casts `self` to [`u384`](crate::u384) based on semantics explained in [The Rust Reference][numeric_cast].
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("assert!(", typename!(), "::MAX.as_u384().lt(u384::MAX));")]
+    /// ```
+    /// [numeric_cast]: <https://doc.rust-lang.org/reference/expressions/operator-expr.html#numeric-cast>
     pub const fn as_u384(self) -> u384 {
         self.into_u384()
     }
 
+    /// Casts `self` to [`u512`](crate::u512) based on semantics explained in [The Rust Reference][numeric_cast].
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("assert_eq!(", typename!(), "::MAX.as_u512().lt(u512::MAX));")]
+    /// ```
+    /// [numeric_cast]: <https://doc.rust-lang.org/reference/expressions/operator-expr.html#numeric-cast>
     pub const fn as_u512(self) -> u512 {
         self.into_u512()
     }
