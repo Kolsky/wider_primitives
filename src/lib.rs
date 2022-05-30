@@ -13,7 +13,7 @@ pub use uint::u256;
 #[doc(inline)]
 pub use uint::u384;
 
-#[doc(hidden)]
+#[doc(inline)]
 pub use uint::u512;
 
 enum UnaryBitOp {
@@ -1718,10 +1718,16 @@ pub fn fmt_unsigned<const N: usize>(this: &Repr<N>, f: &mut fmt::Formatter<'_>) 
         last_rem = None;
     }
     let mut past_zero = false;
-    for rem in last_rem.iter().chain(&rems) {
+    for rem in &last_rem {
         past_zero |= rem > &0;
         if past_zero {
             fmt::Display::fmt(rem, f)?;
+        }
+    }
+    for rem in rems {
+        past_zero |= rem > 0;
+        if past_zero {
+            write!(f, "{:019}", rem)?;
         }
     }
     match past_zero {

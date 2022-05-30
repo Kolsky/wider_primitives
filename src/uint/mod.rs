@@ -6,12 +6,15 @@ pub mod u256_module;
 #[cfg_attr(hide_internal, doc(hidden))]
 pub mod u384_module;
 
+#[path ="u512.rs"]
+#[cfg_attr(hide_internal, doc(hidden))]
+pub mod u512_module;
+
 #[doc(inline)]
 pub use u256_module::u256;
 
 #[doc(inline)]
 pub use u384_module::u384;
 
-#[allow(non_camel_case_types)]
-#[doc(hidden)]
-pub type u512 = u256;
+#[doc(inline)]
+pub use u512_module::u512;
