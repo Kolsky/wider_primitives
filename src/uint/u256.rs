@@ -5,6 +5,7 @@ use crate::ParseIntError;
 use crate::Repr;
 use crate::array_pair_to_u128;
 use crate::uint::*;
+use crate::int::i256;
 
 #[cfg_attr(stable, path = "../stable_ops/u256.rs")]
 #[cfg_attr(unstable, path = "../unstable_ops/u256.rs")]
@@ -450,6 +451,21 @@ impl u256 {
     /// [numeric_cast]: <https://doc.rust-lang.org/reference/expressions/operator-expr.html#numeric-cast>
     pub const fn as_u512(self) -> u512 {
         self.into_u512()
+    }
+
+    /// Casts `self` to [`i256`](crate::i256) based on semantics explained in [The Rust Reference][numeric_cast].
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("assert_eq!(", typename!(), "::MAX.as_i256(), i256::MINUS_ONE);")]
+    /// ```
+    /// [numeric_cast]: <https://doc.rust-lang.org/reference/expressions/operator-expr.html#numeric-cast>
+    pub const fn as_i256(self) -> i256 {
+        i256 { inner: self.inner }
     }
 
     /// Converts a string slice in a given base to an integer.
@@ -1901,7 +1917,6 @@ impl u256 {
     pub const fn shl(self, rhs: u32) -> Self {
         Self { inner: self.inner.shl(rhs) }
     }
-
 
     /// Shifts `self` right by `rhs` bits.
     ///

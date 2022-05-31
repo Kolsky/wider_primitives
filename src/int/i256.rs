@@ -5,6 +5,7 @@ use crate::ParseIntError;
 use crate::Repr;
 use crate::array_pair_to_u128;
 use crate::int::*;
+use crate::uint::u256;
 
 // #[cfg_attr(stable, path = "../stable_ops/i256.rs")]
 // #[cfg_attr(unstable, path = "../unstable_ops/i256.rs")]
@@ -40,6 +41,12 @@ const N: usize = 4;
 macro_rules! typename {
     () => {
         stringify!(i256)
+    };
+}
+
+macro_rules! utypename {
+    () => {
+        stringify!(u256)
     };
 }
 
@@ -426,6 +433,21 @@ impl i256 {
         i512::from_inner(self.inner.as_cast_unsigned().into_inner())
     }
 
+    /// Casts `self` to [`u256`] based on semantics explained in [The Rust Reference][numeric_cast].
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("assert_eq!(", typename!(), "::MINUS_ONE.as_u256(), u256::MAX);")]
+    /// ```
+    /// [numeric_cast]: <https://doc.rust-lang.org/reference/expressions/operator-expr.html#numeric-cast>
+    pub const fn as_u256(self) -> u256 {
+        u256 { inner: self.inner }
+    }
+
     /// Casts `self` to [`i8`] based on semantics explained in [The Rust Reference][numeric_cast].
     /// 
     /// # Examples
@@ -751,4 +773,560 @@ impl i256 {}
 impl i256 {}
 
 /// # Bit manipulation
-impl i256 {}
+impl i256 {
+    /// Returns the state of `i`th bit.
+    /// 
+    /// # Panics
+    /// 
+    #[doc = concat!("This function panics if <code>bit &gt;= <a href=\"struct.", typename!(), ".html#associatedconstant.BITS\" title=\"Self::BITS\">Self::BITS</a></code>.")]
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_u64;")]
+    ///
+    /// assert_eq!(int(0b011001).bit(4), true);
+    /// assert_eq!(int(0b011001).bit(5), false);
+    /// ```
+    pub const fn bit(self, bit: u32) -> bool {
+        self.inner.bit(bit)
+    }
+
+    /// Returns the integer based of off `self` but with the `i`th bit set to 0.
+    /// 
+    /// # Panics
+    /// 
+    #[doc = concat!("This function panics if <code>bit &gt;= <a href=\"struct.", typename!(), ".html#associatedconstant.BITS\" title=\"Self::BITS\">Self::BITS</a></code>.")]
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_u64;")]
+    ///
+    /// assert_eq!(int(0b011001).clear_bit(4), int(0b001001));
+    /// assert_eq!(int(0b011001).clear_bit(5), int(0b011001));
+    /// ```
+    pub const fn clear_bit(self, bit: u32) -> Self {
+        Self { inner: self.inner.clear_bit(bit) }
+    }
+
+    /// Flips the `i`th bit of `self`.
+    /// 
+    /// # Panics
+    /// 
+    #[doc = concat!("This function panics if <code>bit &gt;= <a href=\"struct.", typename!(), ".html#associatedconstant.BITS\" title=\"Self::BITS\">Self::BITS</a></code>.")]
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_u64;")]
+    ///
+    /// assert_eq!(int(0b011001).toggle_bit(4), int(0b001001));
+    /// assert_eq!(int(0b011001).toggle_bit(5), int(0b111001));
+    /// ```
+    pub const fn toggle_bit(self, bit: u32) -> Self {
+        Self { inner: self.inner.toggle_bit(bit) }
+    }
+
+    /// Returns the integer based of off `self` but with the `i`th bit set to 1.
+    /// 
+    /// # Panics
+    /// 
+    #[doc = concat!("This function panics if <code>bit &gt;= <a href=\"struct.", typename!(), ".html#associatedconstant.BITS\" title=\"Self::BITS\">Self::BITS</a></code>.")]
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_u64;")]
+    ///
+    /// assert_eq!(int(0b011001).set_bit(4), int(0b011001));
+    /// assert_eq!(int(0b011001).set_bit(5), int(0b111001));
+    /// ```
+    pub const fn set_bit(self, bit: u32) -> Self {
+        Self { inner: self.inner.set_bit(bit) }
+    }
+
+    /// Flips each bit of `self`.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let x = ", typename!(), "::from_u64(0b011001).not();")]
+    ///
+    /// assert!(!x.bit(0) && !x.bit(3) && !x.bit(4));
+    #[doc = concat!("assert!(x.bit(1) && x.bit(2) && (5..", typename!(), "::BITS).all(|i| x.bit(i)));")]
+    /// ```
+    pub const fn not(self) -> Self {
+        Self { inner: self.inner.not() }
+    }
+
+    /// Computes bitwise `and` between `self` and `rhs`.
+    ///
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_u64;")]
+    /// 
+    /// assert_eq!(int(0b011001).bitand(int(0b110011)), int(0b010001));
+    /// ```
+    pub const fn bitand(self, rhs: Self) -> Self {
+        Self { inner: self.inner.bitand(rhs.inner) }
+    }
+
+    /// Computes bitwise `or` between `self` and `rhs`.
+    ///
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_u64;")]
+    /// 
+    /// assert_eq!(int(0b011001).bitor(int(0b110011)), int(0b111011));
+    /// ```
+    pub const fn bitor(self, rhs: Self) -> Self {
+        Self { inner: self.inner.bitor(rhs.inner) }
+    }
+
+    /// Computes bitwise `exclusive or` between `self` and `rhs`.
+    ///
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_u64;")]
+    /// 
+    /// assert_eq!(int(0b011001).bitxor(int(0b110011)), int(0b101010));
+    /// ```
+    pub const fn bitxor(self, rhs: Self) -> Self {
+        Self { inner: self.inner.bitxor(rhs.inner) }
+    }
+
+    /// Shifts `self` left by `rhs` bits.
+    ///
+    /// Returns a tuple of the shifted version of `self` along with a boolean
+    /// indicating whether the shift value was larger than or equal to the
+    /// number of bits. If the shift value is too large, then value is
+    /// masked (N-1) where N is the number of bits, and this value is then
+    /// used to perform the shift.
+    ///
+    /// # Examples
+    ///
+    /// Basic usage:
+    ///
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_u64;")]
+    /// 
+    /// assert_eq!(int(0x1).overflowing_shl(4), (int(0x10), false));
+    /// assert_eq!(int(0x1).overflowing_shl(1540), (int(0x10), true));
+    /// ```
+    pub const fn overflowing_shl(self, rhs: u32) -> (Self, bool) {
+        let (inner, overflows) = self.inner.overflowing_shl(rhs);
+        (Self { inner }, overflows)
+    }
+
+    /// Checked shift left. Computes `self << rhs`, returning `None`
+    /// if `rhs` is larger than or equal to the number of bits in `self`.
+    ///
+    /// # Examples
+    ///
+    /// Basic usage:
+    ///
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_u64;")]
+    /// 
+    /// assert_eq!(int(0x1).checked_shl(4), Some(int(0x10)));
+    #[doc = concat!("assert_eq!(int(0x1).checked_shl(", typesize!(), "), None);")]
+    /// ```
+    pub const fn checked_shl(self, rhs: u32) -> Option<Self> {
+        match self.inner.checked_shl(rhs) {
+            Some(inner) => Some(Self { inner }),
+            None => None,
+        }
+    }
+
+    /// Saturating shift left. Computes `self << rhs`, returning `0`
+    /// if `rhs` is larger than or equal to the number of bits in `self`.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_u64;")]
+    /// 
+    /// assert_eq!(int(0x1).saturating_shl(4), int(0x10));
+    #[doc = concat!("assert_eq!(int(0x1).saturating_shl(", typesize!(), "), int(0));")]
+    /// ```
+    pub const fn saturating_shl(self, rhs: u32) -> Self {
+        Self { inner: self.inner.saturating_shl(rhs) }
+    }
+
+    /// Panic-free bitwise shift-left; yields `self << mask(rhs)`,
+    /// where `mask` removes any high-order bits of `rhs` that
+    /// would cause the shift to exceed the bitwidth of the type.
+    ///
+    /// Note that this is *not* the same as a rotate-left; the
+    /// RHS of a wrapping shift-left is restricted to the range
+    /// of the type, rather than the bits shifted out of the LHS
+    /// being returned to the other end. The wider integer
+    /// types all implement a [`rotate_left`](Self::rotate_left) function,
+    /// which may be what you want instead.
+    ///
+    /// # Examples
+    ///
+    /// Basic usage:
+    ///
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_u64;")]
+    /// 
+    /// assert_eq!(int(1).wrapping_shl(7), int(128));
+    /// assert_eq!(int(1).wrapping_shl(1536), int(1));
+    /// ```
+    pub const fn wrapping_shl(self, rhs: u32) -> Self {
+        Self { inner: self.inner.wrapping_shl(rhs) }
+    }
+
+    /// Shifts `self` left by `rhs` bits.
+    /// 
+    /// # Overflow behavior
+    /// 
+    /// This function panics on overflow in debug mode
+    /// and wraps around the type boundary in release mode.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_u64;")]
+    /// 
+    /// assert_eq!(int(0x1).shl(4), int(0x10));
+    /// ```
+    pub const fn shl(self, rhs: u32) -> Self {
+        Self { inner: self.inner.shl(rhs) }
+    }
+
+    /// Shifts `self` right by `rhs` bits.
+    ///
+    /// Returns a tuple of the shifted version of `self` along with a boolean
+    /// indicating whether the shift value was larger than or equal to the
+    /// number of bits. If the shift value is too large, then value is
+    /// masked (N-1) where N is the number of bits, and this value is then
+    /// used to perform the shift.
+    ///
+    /// # Examples
+    ///
+    /// Basic usage:
+    ///
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// 
+    /// assert_eq!(int(-0x10).overflowing_shr(4), (int(-0x1), false));
+    /// assert_eq!(int(-0x10).overflowing_shr(1540), (int(-0x1), true));
+    /// ```
+    pub const fn overflowing_shr(self, rhs: u32) -> (Self, bool) {
+        let (inner, overflows) = self.inner.overflowing_shr_signed(rhs);
+        (Self { inner }, overflows)
+    }
+
+    /// Checked shift right. Computes `self >> rhs`, returning `None`
+    /// if `rhs` is larger than or equal to the number of bits in `self`.
+    ///
+    /// # Examples
+    ///
+    /// Basic usage:
+    ///
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_u64;")]
+    /// 
+    /// assert_eq!(int(0x10).checked_shr(4), Some(int(0x1)));
+    #[doc = concat!("assert_eq!(int(0x10).checked_shr(", typesize!(), "), None);")]
+    /// ```
+    pub const fn checked_shr(self, rhs: u32) -> Option<Self> {
+        match self.inner.checked_shr_signed(rhs) {
+            Some(inner) => Some(Self { inner }),
+            None => None,
+        }
+    }
+
+    /// Saturating shift right. Computes `self >> rhs`, returning `0`
+    /// if `rhs` is larger than or equal to the number of bits in `self`.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_u64;")]
+    /// 
+    /// assert_eq!(int(0x10).saturating_shr(4), int(0x1));
+    #[doc = concat!("assert_eq!(int(0x10).saturating_shl(", typesize!(), "), int(0));")]
+    /// ```
+    pub const fn saturating_shr(self, rhs: u32) -> Self {
+        Self { inner: self.inner.saturating_shr_signed(rhs) }
+    }
+
+    /// Panic-free bitwise shift-right; yields `self >> mask(rhs)`,
+    /// where `mask` removes any high-order bits of `rhs` that
+    /// would cause the shift to exceed the bitwidth of the type.
+    ///
+    /// Note that this is *not* the same as a rotate-right; the
+    /// RHS of a wrapping shift-right is restricted to the range
+    /// of the type, rather than the bits shifted out of the LHS
+    /// being returned to the other end. The wider integer
+    /// types all implement a [`rotate_right`](Self::rotate_right) function,
+    /// which may be what you want instead.
+    ///
+    /// # Examples
+    ///
+    /// Basic usage:
+    ///
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_u64;")]
+    /// 
+    /// assert_eq!(int(128).wrapping_shr(7), int(1));
+    /// assert_eq!(int(128).wrapping_shr(1536), int(128));
+    /// ```
+    pub const fn wrapping_shr(self, rhs: u32) -> Self {
+        Self { inner: self.inner.wrapping_shr_signed(rhs) }
+    }
+
+    /// Shifts `self` right by `rhs` bits.
+    /// 
+    /// # Overflow behavior
+    /// 
+    /// This function panics on overflow in debug mode
+    /// and wraps around the type boundary in release mode.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// 
+    /// assert_eq!(int(-0x10).shr(4), int(-0x1));
+    /// ```
+    pub const fn shr(self, rhs: u32) -> Self {
+        Self { inner: self.inner.shr_signed(rhs) }
+    }
+
+    /// Returns the number of ones in the binary representation of `self`.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let n = ", typename!(), "::from_u64(0b01001100);")]
+    /// 
+    /// assert_eq!(n.count_ones(), 3);
+    /// ```
+    #[doc(alias = "popcount")]
+    #[doc(alias = "popcnt")]
+    pub const fn count_ones(self) -> u32 {
+        self.inner.count_ones()
+    }
+
+    /// Returns the number of zeros in the binary representation of `self`.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("assert_eq!(", typename!(), "::MAX.count_zeros(), 1);")]
+    /// ```
+    pub const fn count_zeros(self) -> u32 {
+        self.inner.count_zeros()
+    }
+
+    /// Returns the number of leading ones in the binary representation of `self`.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let n = ", typename!(), "::MAX.shr(2).not();")]
+    /// 
+    /// assert_eq!(n.leading_ones(), 3);
+    /// ```
+    pub const fn leading_ones(self) -> u32 {
+        self.inner.leading_ones()
+    }
+
+    /// Returns the number of leading zeros in the binary representation of `self`.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let n = ", typename!(), "::MAX.shr(2);")]
+    /// 
+    /// assert_eq!(n.leading_zeros(), 3);
+    /// ```
+    pub const fn leading_zeros(self) -> u32 {
+        self.inner.leading_zeros()
+    }
+
+    /// Returns the number of trailing ones in the binary representation
+    /// of `self`.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let n = ", typename!(), "::from_u64(0b1010111);")]
+    /// 
+    /// assert_eq!(n.trailing_ones(), 3);
+    /// ```
+    pub const fn trailing_ones(self) -> u32 {
+        self.inner.trailing_ones()
+    }
+
+    /// Returns the number of trailing zeros in the binary representation
+    /// of `self`.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let n = ", typename!(), "::from_u64(0b0101000);")]
+    /// 
+    /// assert_eq!(n.trailing_zeros(), 3);
+    /// ```
+    pub const fn trailing_zeros(self) -> u32 {
+        self.inner.trailing_zeros()
+    }
+    
+    /// Shifts the bits to the left by a specified amount, `n`,
+    /// wrapping the truncated bits to the end of the resulting integer.
+    /// 
+    /// Please note this isn't the same operation as the `<<` shifting operator!
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let n = ", typename!(), "::from_inner(", op_in!(rotate_left), ");")]
+    #[doc = concat!("let m = ", typename!(), "::from_inner(", op_out!(rotate_left), ");")]
+    /// 
+    #[doc = concat!("assert_eq!(n.rotate_left(", 65, "), m);")]
+    /// ```
+    pub const fn rotate_left(self, rhs: u32) -> Self {
+        Self { inner: self.inner.rotate_left(rhs) }
+    }
+
+    /// Shifts the bits to the right by a specified amount, `n`,
+    /// wrapping the truncated bits to the beginning of the resulting
+    /// integer.
+    /// 
+    /// Please note this isn't the same operation as the `>>` shifting operator!
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let n = ", typename!(), "::from_inner(", op_in!(rotate_right), ");")]
+    #[doc = concat!("let m = ", typename!(), "::from_inner(", op_out!(rotate_right), ");")]
+    /// 
+    #[doc = concat!("assert_eq!(n.rotate_right(", 65, "), m);")]
+    /// ```
+    pub const fn rotate_right(self, rhs: u32) -> Self {
+        Self { inner: self.inner.rotate_right(rhs) }
+    }
+    
+    /// Reverses the word order of the integer.
+    /// Here ‘word’ means an underlying primitive integer type
+    /// that the current implementation relies upon. It effectively
+    /// reverses the array of words returned by [`into_inner`](Self::into_inner).
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let n = ", typename!(), "::from_inner(", op_in!(swap_words), ");")]
+    #[doc = concat!("let m = ", typename!(), "::from_inner(", op_out!(swap_words), ");")]
+    /// 
+    /// assert_eq!(n.swap_words(), m);
+    /// ```
+    pub const fn swap_words(self) -> Self {
+        Self { inner: self.inner.swap_words() }
+    }
+
+    /// Reverses the byte order of the integer.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = |x| ", utypename!(), "::from_hex_str_or_panic(x).as_", typename!(), "();")]
+    #[doc = concat!("let n = int(", op_in!(swap_bytes), ");")]
+    #[doc = concat!("let m = int(", op_out!(swap_bytes), ");")]
+    /// 
+    /// assert_eq!(n.swap_bytes(), m);
+    /// ```
+    pub const fn swap_bytes(self) -> Self {
+        Self { inner: self.inner.swap_bytes() }
+    }
+
+    /// Reverses the order of bits in the integer. The least significant bit becomes the most significant bit,
+    ///                 second least-significant bit becomes second most-significant bit, etc.
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = |x| ", utypename!(), "::from_hex_str_or_panic(x).as_", typename!(), "();")]
+    #[doc = concat!("let n = int(", op_in!(reverse_bits), ");")]
+    #[doc = concat!("let m = int(", op_out!(reverse_bits), ");")]
+    /// 
+    /// assert_eq!(n.reverse_bits(), m);
+    /// ```
+    pub const fn reverse_bits(self) -> Self {
+        Self { inner: self.inner.reverse_bits() }
+    }
+}
