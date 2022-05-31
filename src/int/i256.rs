@@ -632,7 +632,7 @@ impl i256 {
     /// 
     /// ```
     /// # use wider_primitives::*;
-    #[doc = concat!("assert_eq!(", typename!(), "::from_str(\"98765432109876543210\"), Ok(", typename!(), "::from_u128(98765432109876543210)));")]
+    #[doc = concat!("assert_eq!(", typename!(), "::from_str(\"-98765432109876543210\"), Ok(", typename!(), "::from_i128(-98765432109876543210)));")]
     /// ```
     pub const fn from_str(src: &str) -> Result<Self, ParseIntError> {
         match Repr::from_str_signed(src) {
@@ -652,7 +652,7 @@ impl i256 {
     /// 
     /// ```
     /// # use wider_primitives::*;
-    #[doc = concat!("assert_eq!(", typename!(), "::from_str_or_panic(\"98765432109876543210\"), ", typename!(), "::from_u128(98765432109876543210));")]
+    #[doc = concat!("assert_eq!(", typename!(), "::from_str_or_panic(\"-98765432109876543210\"), ", typename!(), "::from_i128(-98765432109876543210));")]
     /// ```
     /// ```should_panic
     /// # use wider_primitives::*;
