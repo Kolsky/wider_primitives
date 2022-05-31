@@ -528,7 +528,7 @@ impl<const N: usize> Repr<N> {
     }
 
     const fn sign_bit_test(&self, rhs: &Self, result: &Self) -> bool {
-        (self.bit(Self::SIGN_BIT) ^ rhs.bit(Self::SIGN_BIT)) && (self.bit(Self::SIGN_BIT) ^ result.bit(Self::SIGN_BIT))
+        (result.bit(Self::SIGN_BIT) ^ self.bit(Self::SIGN_BIT)) && (result.bit(Self::SIGN_BIT) ^ rhs.bit(Self::SIGN_BIT))
     }
 
     pub const fn overflowing_add_signed(self, rhs: Self) -> (Self, bool) {
@@ -586,7 +586,6 @@ impl<const N: usize> Repr<N> {
     pub const fn wrapping_sub(self, rhs: Self) -> Self {
         self.overflowing_sub_unsigned(rhs).0
     }
-    
 
     #[cfg(debug)]
     pub const fn sub_unsigned(self, rhs: Self) -> Self {
@@ -610,7 +609,7 @@ impl<const N: usize> Repr<N> {
 
     pub const fn overflowing_sub_signed(self, rhs: Self) -> (Self, bool) {
         let result = self.wrapping_sub(rhs);
-        (result, self.sign_bit_test(&rhs, &result))
+        (result, result.sign_bit_test(&rhs, &self))
     }
 
     pub const fn checked_sub_signed(self, rhs: Self) -> Option<Self> {

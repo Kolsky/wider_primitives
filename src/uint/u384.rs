@@ -893,7 +893,7 @@ impl u384 {
     /// ```
     /// # use wider_primitives::*;
     #[doc = concat!("let uint = ", typename!(), "::from_u64;")]
-    /// assert_eq!(uint(629).saturating_sub(uint(81)), uint(548));
+    /// assert_eq!(uint(629).sub(uint(81)), uint(548));
     /// ```
     pub const fn sub(self, rhs: Self) -> Self {
         Self { inner: self.inner.sub_unsigned(rhs.inner) }

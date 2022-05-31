@@ -430,7 +430,7 @@ impl i256 {
     #[doc = concat!("assert!(", typename!(), "::MIN.into_i512().gt(i512::MIN));")]
     /// ```
     pub const fn into_i512(self) -> i512 {
-        i512::from_inner(self.inner.as_cast_unsigned().into_inner())
+        i512::from_inner(self.inner.as_cast_signed().into_inner())
     }
 
     /// Casts `self` to [`u256`] based on semantics explained in [The Rust Reference][numeric_cast].
@@ -768,7 +768,204 @@ impl i256 {
     }
 }
 
-impl i256 {}
+impl i256 {
+    /// Calculates `self + rhs`.
+    /// 
+    /// Returns a tuple of the addition along with a boolean indicating
+    /// whether an arithmetic overflow would occur. If an overflow would
+    /// have occurred then the wrapped value is returned.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_u64;")]
+    /// assert_eq!(int(5).overflowing_add(int(2)), (int(7), false));
+    #[doc = concat!("assert_eq!(", typename!(), "::MAX.overflowing_add(int(1)), (", typename!(), "::MIN, true));")]
+    /// ```
+    pub const fn overflowing_add(self, rhs: Self) -> (Self, bool) {
+        let (inner, overflows) = self.inner.overflowing_add_signed(rhs.inner);
+        (Self { inner }, overflows)
+    }
+
+    /// Checked integer addition. Computes `self + rhs`, returning `None`
+    /// if overflow occurred.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_u64;")]
+    #[doc = concat!(
+        "assert_eq!(", typename!(), "::MAX.sub(int(2)).checked_add(int(1)), ",
+        "Some(", typename!(), "::MAX.sub(int(1))));"
+    )]
+    #[doc = concat!("assert_eq!(", typename!(), "::MAX.sub(int(2)).checked_add(int(3)), None);")]
+    /// ```
+    pub const fn checked_add(self, rhs: Self) -> Option<Self> {
+        match self.inner.checked_add_signed(rhs.inner) {
+            Some(inner) => Some(Self { inner }),
+            None => None,
+        }
+    }
+
+    /// Saturating integer addition. Computes `self + rhs`, saturating at
+    /// the numeric bounds instead of overflowing.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// assert_eq!(int(100).saturating_add(int(1)), int(101));
+    #[doc = concat!("assert_eq!(", typename!(), "::MAX.saturating_add(int(127)), ", typename!(), "::MAX);")]
+    #[doc = concat!("assert_eq!(", typename!(), "::MIN.saturating_add(int(-12)), ", typename!(), "::MIN);")]
+    /// ```
+    pub const fn saturating_add(self, rhs: Self) -> Self {
+        Self { inner: self.inner.saturating_add_signed(rhs.inner) }
+    }
+
+    /// Wrapping (modular) addition. Computes `self + rhs`,
+    /// wrapping around at the boundary of the type.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_u64;")]
+    /// assert_eq!(int(200).wrapping_add(int(55)), int(255));
+    #[doc = concat!("assert_eq!(int(200).wrapping_add(", typename!(), "::MAX), int(199).add(", typename!(), "::MIN));")]
+    /// ```
+    pub const fn wrapping_add(self, rhs: Self) -> Self {
+        Self { inner: self.inner.wrapping_add(rhs.inner) }
+    }
+
+    /// Calculates `self + rhs`.
+    /// 
+    /// # Overflow behavior
+    /// 
+    /// This function panics on overflow in debug mode
+    /// and wraps around the type boundary in release mode. 
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_u64;")]
+    /// assert_eq!(int(1).add(int(1)), int(2));
+    pub const fn add(self, rhs: Self) -> Self {
+        Self { inner: self.inner.add_signed(rhs.inner) }
+    }
+
+    /// Calculates `self - rhs`.
+    /// 
+    /// Returns a tuple of the subtraction along with a boolean indicating
+    /// whether an arithmetic overflow would occur. If an overflow would
+    /// have occurred then the wrapped value is returned.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_u64;")]
+    /// assert_eq!(int(5).overflowing_sub(int(2)), (int(3), false));
+    #[doc = concat!("assert_eq!(", typename!(), "::MIN.overflowing_sub(int(1)), (", typename!(), "::MAX, true));")]
+    /// ```
+    pub const fn overflowing_sub(self, rhs: Self) -> (Self, bool) {
+        let (inner, overflows) = self.inner.overflowing_sub_signed(rhs.inner);
+        (Self { inner }, overflows)
+    }
+
+    /// Checked integer subtraction. Computes `self - rhs`, returning
+    /// `None` if overflow occurred.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_u64;")]
+    /// assert_eq!(int(1).checked_sub(int(1)), Some(int(0)));
+    #[doc = concat!("assert_eq!(", typename!(), "::MIN.checked_sub(int(1)), None);")]
+    /// ```
+    pub const fn checked_sub(self, rhs: Self) -> Option<Self> {
+        match self.inner.checked_sub_signed(rhs.inner) {
+            Some(inner) => Some(Self { inner }),
+            None => None,
+        }
+    }
+
+    /// Saturating integer subtraction. Computes `self - rhs`, saturating
+    /// at the numeric bounds instead of overflowing.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    #[doc = concat!("let min = ", typename!(), "::MIN;")]
+    #[doc = concat!("let max = ", typename!(), "::MAX;")]
+    /// 
+    /// assert_eq!(int(100).saturating_sub(int(27)), int(73));
+    /// assert_eq!(min.add(int(13)).saturating_sub(int(127)), min);
+    /// assert_eq!(max.saturating_sub(int(-127)), max);
+    /// ```
+    pub const fn saturating_sub(self, rhs: Self) -> Self {
+        Self { inner: self.inner.saturating_sub_signed(rhs.inner) }
+    }
+
+    /// Wrapping (modular) subtraction. Computes `self - rhs`,
+    /// wrapping around at the boundary of the type.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_u64;")]
+    /// assert_eq!(int(100).wrapping_sub(int(100)), int(0));
+    #[doc = concat!("assert_eq!(int(100).wrapping_sub(", typename!(), "::MAX), int(101).add(", typename!(), "::MIN));")]
+    /// ```
+    pub const fn wrapping_sub(self, rhs: Self) -> Self {
+        Self { inner: self.inner.wrapping_sub(rhs.inner) }
+    }
+
+    /// Calculates `self - rhs`.
+    /// 
+    /// # Overflow behavior
+    /// 
+    /// This function panics on overflow in debug mode
+    /// and wraps around the type boundary in release mode. 
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_u64;")]
+    /// assert_eq!(int(629).sub(int(81)), int(548));
+    /// ```
+    pub const fn sub(self, rhs: Self) -> Self {
+        Self { inner: self.inner.sub_signed(rhs.inner) }
+    }
+}
 
 impl i256 {}
 
