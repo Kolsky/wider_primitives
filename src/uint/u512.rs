@@ -5,6 +5,7 @@ use crate::ParseIntError;
 use crate::Repr;
 use crate::array_pair_to_u128;
 use crate::uint::*;
+use crate::int::i512;
 
 #[cfg_attr(stable, path = "../stable_ops/u512.rs")]
 #[cfg_attr(unstable, path = "../unstable_ops/u512.rs")]
@@ -450,6 +451,22 @@ impl u512 {
     /// [numeric_cast]: <https://doc.rust-lang.org/reference/expressions/operator-expr.html#numeric-cast>
     pub const fn as_u512(self) -> u512 {
         self
+    }
+
+    /// Casts `self` to [`i512`](crate::i512) based on semantics explained in [The Rust Reference][numeric_cast].
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("assert_eq!(", typename!(), "::MAX.as_i512(), i512::MINUS_ONE);")]
+    /// ```
+    /// [numeric_cast]: <https://doc.rust-lang.org/reference/expressions/operator-expr.html#numeric-cast>
+    pub const fn as_i512(self) -> i512 {
+        panic!("uncomment once int lands");
+        // i512 { inner: self.inner }
     }
 
     /// Converts a string slice in a given base to an integer.

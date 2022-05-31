@@ -5,6 +5,7 @@ use crate::ParseIntError;
 use crate::Repr;
 use crate::array_pair_to_u128;
 use crate::uint::*;
+use crate::int::i384;
 
 #[cfg_attr(stable, path = "../stable_ops/u384.rs")]
 #[cfg_attr(unstable, path = "../unstable_ops/u384.rs")]
@@ -450,6 +451,22 @@ impl u384 {
     /// [numeric_cast]: <https://doc.rust-lang.org/reference/expressions/operator-expr.html#numeric-cast>
     pub const fn as_u512(self) -> u512 {
         self.into_u512()
+    }
+
+    /// Casts `self` to [`i384`](crate::i384) based on semantics explained in [The Rust Reference][numeric_cast].
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("assert_eq!(", typename!(), "::MAX.as_i384(), i384::MINUS_ONE);")]
+    /// ```
+    /// [numeric_cast]: <https://doc.rust-lang.org/reference/expressions/operator-expr.html#numeric-cast>
+    pub const fn as_i384(self) -> i384 {
+        panic!("uncomment once int lands");
+        // i384 { inner: self.inner }
     }
 
     /// Converts a string slice in a given base to an integer.
