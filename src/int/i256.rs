@@ -1322,7 +1322,7 @@ impl i256 {
     /// assert_eq!(y.checked_divrem(int(0)), None);
     /// ```
     pub const fn checked_divrem(self, rhs: Self) -> Option<(Self, Self)> {
-        match self.inner.checked_divrem_unsigned(rhs.inner) {
+        match self.inner.checked_divrem_signed(rhs.inner) {
             Some((quot, rem)) => Some((Self { inner: quot }, Self { inner: rem })),
             None => None,
         }
