@@ -768,6 +768,7 @@ impl i256 {
     }
 }
 
+/// # Basic arithmetic operations
 impl i256 {
     /// Calculates `self + rhs`.
     /// 
@@ -967,7 +968,116 @@ impl i256 {
     }
 }
 
-impl i256 {}
+/// # Extended arithmetic operations
+impl i256 {
+    /// Computes the absolute value of `self`.
+    ///
+    /// Returns a tuple of the absolute version of self along with a boolean indicating whether an overflow
+    /// happened. If self is the minimum value
+    #[doc = concat!("(e.g., ", typename!(), "::MIN for values of type ", typename!(), "),")]
+    /// then the minimum value will be returned again and true will be returned
+    /// for an overflow happening.
+    ///
+    /// # Examples
+    ///
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// 
+    /// assert_eq!(int(10).overflowing_abs(), (int(10), false));
+    /// assert_eq!(int(-10).overflowing_abs(), (int(10), false));
+    #[doc = concat!("assert_eq!(", typename!(), "::MIN.overflowing_abs(), (", typename!(), "::MIN, true));")]
+    /// ```
+    pub const fn overflowing_abs(self) -> (Self, bool) {
+        let (inner, overflows) = self.inner.overflowing_abs();
+        (Self { inner }, overflows)
+    }
+
+
+    /// Checked absolute value. Computes `self.abs()`, returning `None` if
+    /// `self == MIN`.
+    ///
+    /// # Examples
+    ///
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// 
+    /// assert_eq!(int(5).overflowing_abs(), Some(int(5)));
+    #[doc = concat!("assert_eq!(", typename!(), "::MIN.overflowing_abs(), None);")]
+    /// ```
+    pub const fn checked_abs(self) -> Option<Self> {
+        match self.inner.checked_abs() {
+            Some(inner) => Some(Self { inner }),
+            None => None,
+        }
+    }
+    /// Saturating integer negation. Computes `-self`, returning `MAX` if `self == MIN`
+    /// instead of overflowing.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// 
+    /// assert_eq!(int(5).saturating_abs(), int(5));
+    #[doc = concat!("assert_eq!(", typename!(), "::MIN.saturating_abs(), ", typename!(), "::MAX);")]
+    /// ```
+    pub const fn saturating_abs(self) -> Self {
+        Self { inner: self.inner.saturating_abs() }
+    }
+
+    /// Wrapping (modular) absolute value. Computes `self.abs()`, wrapping around at
+    /// the boundary of the type.
+    /// 
+    /// The only case where such wrapping can occur is when one takes the absolute value of the negative
+    /// minimal value for the type; this is a positive value that is too large to represent in the type. In
+    /// such a case, this function returns `MIN` itself.
+    /// 
+    /// # Examples
+    ///
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// 
+    /// assert_eq!(int(5).wrapping_abs(), int(5));
+    #[doc = concat!("assert_eq!(", typename!(), "::MIN.wrapping_abs(), ", typename!(), "::MIN);")]
+    /// ```
+    pub const fn wrapping_abs(self) -> Self {
+        Self { inner: self.inner.wrapping_abs() }
+    }
+
+    /// Computes the absolute value of `self`.
+    /// 
+    /// # Overflow behavior
+    /// 
+    /// This function panics on overflow in debug mode
+    /// and wraps around the type boundary in release mode. 
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// 
+    /// assert_eq!(int(5).abs(), int(5));
+    /// assert_eq!(int(-5).abs(), int(5));
+    /// ```
+    pub const fn abs(self) -> Self {
+        Self { inner: self.inner.abs() }
+    }
+}
 
 /// # Bit manipulation
 impl i256 {
