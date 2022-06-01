@@ -973,8 +973,9 @@ impl i256 {
     /// Negates self, overflowing if this is equal to the minimum value.
     /// 
     /// Returns a tuple of the negated version of self along with a boolean indicating whether an overflow
-    /// happened. If `self` is the minimum value (e.g., `i32::MIN` for values of type `i32`), then the
-    /// minimum value will be returned again and `true` will be returned for an overflow happening.
+    /// happened. If `self` is the minimum value 
+    #[doc = concat!("(e.g., [`", typename!(), "::MIN`] for values of type `", typename!(), "`),")]
+    /// then the minimum value will be returned again and `true` will be returned for an overflow happening.
     /// 
     /// # Examples
     /// 
@@ -1067,7 +1068,7 @@ impl i256 {
     ///
     /// Returns a tuple of the absolute version of self along with a boolean indicating whether an overflow
     /// happened. If self is the minimum value
-    #[doc = concat!("(e.g., ", typename!(), "::MIN for values of type ", typename!(), "),")]
+    #[doc = concat!("(e.g., [`", typename!(), "::MIN`] for values of type `", typename!(), "`),")]
     /// then the minimum value will be returned again and true will be returned
     /// for an overflow happening.
     ///
