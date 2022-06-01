@@ -1209,6 +1209,42 @@ impl i256 {
     pub const fn signum(self) -> Self {
         Self { inner: self.inner.signum() }
     }
+
+    /// Returns `true` if `self` is positive and `false` if the number is zero or
+    /// negative.
+    ///
+    /// # Examples
+    ///
+    /// Basic usage:
+    ///
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")] 
+    /// 
+    /// assert!(int(10).is_positive());
+    /// assert!(!int(-10).is_positive());
+    /// ```
+    pub const fn is_positive(self) -> bool {
+        self.inner.is_positive()
+    }
+
+    /// Returns `true` if `self` is negative and `false` if the number is zero or
+    /// positive.
+    ///
+    /// # Examples
+    ///
+    /// Basic usage:
+    ///
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")] 
+    /// 
+    /// assert!(!int(10).is_negative());
+    /// assert!(int(-10).is_negative());
+    /// ```
+    pub const fn is_negative(self) -> bool {
+        self.inner.is_negative()
+    }
     
     /// Calculates the complete product `self * rhs`
     /// without the possibility to overflow.
