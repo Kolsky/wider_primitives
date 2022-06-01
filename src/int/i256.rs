@@ -1088,7 +1088,6 @@ impl i256 {
         (Self { inner }, overflows)
     }
 
-
     /// Checked absolute value. Computes `self.abs()`, returning `None` if
     /// `self == MIN`.
     ///
@@ -1186,6 +1185,106 @@ impl i256 {
     /// ```
     pub const fn abs_diff(self, rhs: Self) -> u256 {
         u256 { inner: self.inner.abs_diff_signed(rhs.inner) }
+    }
+    
+    /// Raises self to the power of `exp`, using exponentiation by squaring.
+    ///
+    /// Returns a tuple of the exponentiation along with a bool indicating
+    /// whether an overflow happened.
+    ///
+    /// # Examples
+    ///
+    /// Basic usage:
+    ///
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// 
+    /// assert_eq!(int(-3).overflowing_pow(5), (int(-243), false));
+    /// assert_eq!(int(2).overflowing_pow(512), (int(0), true));
+    /// ```
+    pub const fn overflowing_pow(self, rhs: u32) -> (Self, bool) {
+        let (inner, overflows) = self.inner.overflowing_pow_signed(rhs);
+        (Self { inner }, overflows)
+    }
+
+    /// Checked exponentiation. Computes `self.pow(exp)`, returning `None` if
+    /// overflow occurred.
+    ///
+    /// # Examples
+    ///
+    /// Basic usage:
+    ///
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_u64;")]
+    /// 
+    /// assert_eq!(int(2).checked_pow(5), Some(int(32)));
+    #[doc = concat!("assert_eq!(", typename!(), "::MAX.checked_pow(2), None);")]
+    /// ```
+    pub const fn checked_pow(self, rhs: u32) -> Option<Self> {
+        match self.inner.checked_pow_signed(rhs) {
+            Some(inner) => Some(Self { inner }),
+            None => None,
+        }
+    }
+
+    /// Saturating integer exponentiation. Computes `self.pow(exp)`,
+    /// saturating at the numeric bounds instead of overflowing.
+    ///
+    /// # Examples
+    ///
+    /// Basic usage:
+    ///
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// 
+    /// assert_eq!(int(4).saturating_pow(3), int(64));
+    #[doc = concat!("assert_eq!(int(3).saturating_pow(324), ", typename!(), "::MAX);")]
+    #[doc = concat!("assert_eq!(int(-3).saturating_pow(325), ", typename!(), "::MIN);")]
+    /// ```
+    pub const fn saturating_pow(self, rhs: u32) -> Self {
+        Self { inner: self.inner.saturating_pow_signed(rhs) }
+    }
+
+    /// Wrapping (modular) exponentiation. Computes `self.pow(exp)`,
+    /// wrapping around at the boundary of the type.
+    ///
+    /// # Examples
+    ///
+    /// Basic usage:
+    ///
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_u64;")]
+    /// 
+    /// assert_eq!(int(3).wrapping_pow(5), int(243));
+    /// assert_eq!(int(2).wrapping_pow(512), int(0));
+    /// ```
+    pub const fn wrapping_pow(self, rhs: u32) -> Self {
+        Self { inner: self.inner.wrapping_pow_signed(rhs) }
+    }
+
+    /// Raises self to the power of `exp`, using exponentiation by squaring.
+    /// 
+    /// # Overflow behavior
+    /// 
+    /// This function panics on overflow in debug mode
+    /// and wraps around the type boundary in release mode.
+    /// 
+    /// # Examples
+    ///
+    /// Basic usage:
+    ///
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// 
+    /// assert_eq!(int(-9).pow(9), int(-387_420_489));
+    /// ```
+    pub const fn pow(self, rhs: u32) -> Self {
+        Self { inner: self.inner.pow_signed(rhs) }
     }
 }
 

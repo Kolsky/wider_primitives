@@ -772,7 +772,7 @@ impl<const N: usize> Repr<N> {
     }
     
     pub const fn overflowing_mul_signed(self, rhs: Self) -> (Self, bool) {
-        let (lo, hi) = self.full_mul_unsigned(rhs);
+        let (lo, hi) = self.full_mul_signed(rhs);
         (lo, !hi.equals(&Self::ZERO) && !hi.equals(&Self::MINUS_ONE))
     }
 
@@ -1403,7 +1403,9 @@ impl<const N: usize> Repr<N> {
     pub const fn saturating_pow_signed(self, exp: u32) -> Self {
         match self.overflowing_pow_signed(exp) {
             (val, false) => val,
-            (_, true) => Self::MAX_UNSIGNED,
+            (_, true) if self.is_negative() && exp % 2 != 0 =>
+                Self::MIN_SIGNED,
+            (_, true) => Self::MAX_SIGNED,
         }
     }
 
