@@ -970,6 +970,99 @@ impl i256 {
 
 /// # Extended arithmetic operations
 impl i256 {
+    /// Negates self, overflowing if this is equal to the minimum value.
+    /// 
+    /// Returns a tuple of the negated version of self along with a boolean indicating whether an overflow
+    /// happened. If `self` is the minimum value (e.g., `i32::MIN` for values of type `i32`), then the
+    /// minimum value will be returned again and `true` will be returned for an overflow happening.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("assert_eq!(", typename!(), "::MAX.overflowing_neg(), (", typename!(), "::MIN.add(", typename!(), "::ONE), false));")]
+    #[doc = concat!("assert_eq!(", typename!(), "::MIN.overflowing_neg(), (", typename!(), "::MIN, true));")]
+    /// ```
+    pub const fn overflowing_neg(self) -> (Self, bool) {
+        let (inner, overflows) = self.inner.overflowing_neg_signed();
+        (Self { inner }, overflows)
+    }
+
+    /// Checked negation. Computes `-self`, returning `None` if `self == MIN`.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("assert_eq!(", typename!(), "::from_i64(5).checked_neg(), Some(", typename!(), "::from_i64(-5)));")]
+    #[doc = concat!("assert_eq!(", typename!(), "::MIN.checked_neg(), None);")]
+    /// ```
+    pub const fn checked_neg(self) -> Option<Self> {
+        match self.inner.checked_neg_signed() {
+            Some(inner) => Some(Self { inner }),
+            None => None,
+        }
+    }
+
+    /// Saturating integer negation. Computes `-self`, returning `MAX` if `self == MIN`
+    /// instead of overflowing.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("assert_eq!(", typename!(), "::from_i64(5).saturating_neg(), ", typename!(), "::from_i64(-5));")]
+    #[doc = concat!("assert_eq!(", typename!(), "::MIN.saturating_neg(), ", typename!(), "::MAX);")]
+    /// ```
+    pub const fn saturating_neg(self) -> Self {
+        Self { inner: self.inner.saturating_neg_signed() }
+    }
+
+    /// Wrapping (modular) negation. Computes `-self`, wrapping around at the boundary
+    /// of the type.
+    /// 
+    /// The only case where such wrapping can occur is when one negates `MIN` on a signed type (where `MIN`
+    /// is the negative minimal value for the type); this is a positive value that is too large to represent
+    /// in the type. In such a case, this function returns `MIN` itself.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("assert_eq!(", typename!(), "::MAX.wrapping_neg(), ", typename!(), "::MIN.add(", typename!(), "::ONE));")]
+    #[doc = concat!("assert_eq!(", typename!(), "::MIN.wrapping_neg(), ", typename!(), "::MIN);")]
+    /// ```
+    pub const fn wrapping_neg(self) -> Self {
+        Self { inner: self.inner.wrapping_neg() }
+    }
+
+    /// Computes `-self`.
+    /// 
+    /// # Overflow behavior
+    /// 
+    /// This function panics on overflow in debug mode
+    /// and wraps around the type boundary in release mode. 
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("assert_eq!(", typename!(), "::from_i64(-5).neg(), ", typename!(), "::from_i64(5));")]
+    /// ```
+    pub const fn neg(self) -> Self {
+        Self { inner: self.inner.neg_signed() }
+    }
+
     /// Computes the absolute value of `self`.
     ///
     /// Returns a tuple of the absolute version of self along with a boolean indicating whether an overflow

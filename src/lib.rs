@@ -469,6 +469,13 @@ impl<const N: usize> Repr<N> {
         }
     }
 
+    pub const fn saturating_neg_signed(self) -> Self {
+        match self.overflowing_neg_signed() {
+            (val, false) => val,
+            (_, true) => Self::MAX_SIGNED,
+        }
+    }
+
     #[cfg(debug)]
     pub const fn neg_signed(self) -> Self {
         match self.overflowing_neg_signed() {
