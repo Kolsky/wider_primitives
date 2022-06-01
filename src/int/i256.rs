@@ -1077,6 +1077,23 @@ impl i256 {
     pub const fn abs(self) -> Self {
         Self { inner: self.inner.abs() }
     }
+    
+    /// Computes the absolute difference between `self` and `other`.
+    /// 
+    /// This function always returns the correct answer without overflow or
+    /// panics by returning an unsigned integer.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("assert_eq!(", typename!(), "::MIN.abs_diff(", typename!(), "::MAX), ", utypename!(), "::MAX);")]
+    /// ```
+    pub const fn abs_diff(self, rhs: Self) -> u256 {
+        u256 { inner: self.inner.abs_diff_signed(rhs.inner) }
+    }
 }
 
 /// # Bit manipulation
