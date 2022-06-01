@@ -1354,8 +1354,8 @@ impl u512 {
     /// assert_eq!(uint(100).abs_diff(uint(80)), uint(20));
     /// assert_eq!(uint(100).abs_diff(uint(110)), uint(10));
     /// ```
-    pub const fn abs_diff(self, rhs: Self) -> Self {
-        Self{ inner: self.inner.abs_diff_unsigned(rhs.inner) }
+    pub const fn abs_diff(self, other: Self) -> Self {
+        Self{ inner: self.inner.abs_diff_unsigned(other.inner) }
     }
 
     /// Calculates the complete product `self * rhs`
@@ -1494,8 +1494,8 @@ impl u512 {
     /// assert_eq!(uint(3).overflowing_pow(5), (uint(243), false));
     /// assert_eq!(uint(2).overflowing_pow(512), (uint(0), true));
     /// ```
-    pub const fn overflowing_pow(self, rhs: u32) -> (Self, bool) {
-        let (inner, overflows) = self.inner.overflowing_pow_unsigned(rhs);
+    pub const fn overflowing_pow(self, exp: u32) -> (Self, bool) {
+        let (inner, overflows) = self.inner.overflowing_pow_unsigned(exp);
         (Self { inner }, overflows)
     }
 
@@ -1513,8 +1513,8 @@ impl u512 {
     /// assert_eq!(uint(2).checked_pow(5), Some(uint(32)));
     #[doc = concat!("assert_eq!(", typename!(), "::MAX.checked_pow(2), None);")]
     /// ```
-    pub const fn checked_pow(self, rhs: u32) -> Option<Self> {
-        match self.inner.checked_pow_unsigned(rhs) {
+    pub const fn checked_pow(self, exp: u32) -> Option<Self> {
+        match self.inner.checked_pow_unsigned(exp) {
             Some(inner) => Some(Self { inner }),
             None => None,
         }
@@ -1534,8 +1534,8 @@ impl u512 {
     /// assert_eq!(uint(4).saturating_pow(3), uint(64));
     #[doc = concat!("assert_eq!(uint(3).saturating_pow(324), ", typename!(), "::MAX);")]
     /// ```
-    pub const fn saturating_pow(self, rhs: u32) -> Self {
-        Self { inner: self.inner.saturating_pow_unsigned(rhs) }
+    pub const fn saturating_pow(self, exp: u32) -> Self {
+        Self { inner: self.inner.saturating_pow_unsigned(exp) }
     }
 
     /// Wrapping (modular) exponentiation. Computes `self.pow(exp)`,
@@ -1552,8 +1552,8 @@ impl u512 {
     /// assert_eq!(uint(3).wrapping_pow(5), uint(243));
     /// assert_eq!(uint(2).wrapping_pow(512), uint(0));
     /// ```
-    pub const fn wrapping_pow(self, rhs: u32) -> Self {
-        Self { inner: self.inner.wrapping_pow_unsigned(rhs) }
+    pub const fn wrapping_pow(self, exp: u32) -> Self {
+        Self { inner: self.inner.wrapping_pow_unsigned(exp) }
     }
 
     /// Raises self to the power of `exp`, using exponentiation by squaring.
@@ -1573,8 +1573,8 @@ impl u512 {
     /// 
     /// assert_eq!(uint(9).pow(9), uint(387_420_489));
     /// ```
-    pub const fn pow(self, rhs: u32) -> Self {
-        Self { inner: self.inner.pow_unsigned(rhs) }
+    pub const fn pow(self, exp: u32) -> Self {
+        Self { inner: self.inner.pow_unsigned(exp) }
     }
 
     /// Returns the tuple pair of smallest power of two greater than or equal

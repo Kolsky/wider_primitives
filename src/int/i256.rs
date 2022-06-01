@@ -1184,8 +1184,8 @@ impl i256 {
     /// # use wider_primitives::*;
     #[doc = concat!("assert_eq!(", typename!(), "::MIN.abs_diff(", typename!(), "::MAX), ", utypename!(), "::MAX);")]
     /// ```
-    pub const fn abs_diff(self, rhs: Self) -> u256 {
-        u256 { inner: self.inner.abs_diff_signed(rhs.inner) }
+    pub const fn abs_diff(self, other: Self) -> u256 {
+        u256 { inner: self.inner.abs_diff_signed(other.inner) }
     }
 
     /// Returns a number representing sign of `self`.
@@ -1226,8 +1226,8 @@ impl i256 {
     /// assert_eq!(int(-3).overflowing_pow(5), (int(-243), false));
     /// assert_eq!(int(2).overflowing_pow(512), (int(0), true));
     /// ```
-    pub const fn overflowing_pow(self, rhs: u32) -> (Self, bool) {
-        let (inner, overflows) = self.inner.overflowing_pow_signed(rhs);
+    pub const fn overflowing_pow(self, exp: u32) -> (Self, bool) {
+        let (inner, overflows) = self.inner.overflowing_pow_signed(exp);
         (Self { inner }, overflows)
     }
 
@@ -1245,8 +1245,8 @@ impl i256 {
     /// assert_eq!(int(2).checked_pow(5), Some(int(32)));
     #[doc = concat!("assert_eq!(", typename!(), "::MAX.checked_pow(2), None);")]
     /// ```
-    pub const fn checked_pow(self, rhs: u32) -> Option<Self> {
-        match self.inner.checked_pow_signed(rhs) {
+    pub const fn checked_pow(self, exp: u32) -> Option<Self> {
+        match self.inner.checked_pow_signed(exp) {
             Some(inner) => Some(Self { inner }),
             None => None,
         }
@@ -1267,8 +1267,8 @@ impl i256 {
     #[doc = concat!("assert_eq!(int(3).saturating_pow(324), ", typename!(), "::MAX);")]
     #[doc = concat!("assert_eq!(int(-3).saturating_pow(325), ", typename!(), "::MIN);")]
     /// ```
-    pub const fn saturating_pow(self, rhs: u32) -> Self {
-        Self { inner: self.inner.saturating_pow_signed(rhs) }
+    pub const fn saturating_pow(self, exp: u32) -> Self {
+        Self { inner: self.inner.saturating_pow_signed(exp) }
     }
 
     /// Wrapping (modular) exponentiation. Computes `self.pow(exp)`,
@@ -1285,8 +1285,8 @@ impl i256 {
     /// assert_eq!(int(3).wrapping_pow(5), int(243));
     /// assert_eq!(int(2).wrapping_pow(512), int(0));
     /// ```
-    pub const fn wrapping_pow(self, rhs: u32) -> Self {
-        Self { inner: self.inner.wrapping_pow_signed(rhs) }
+    pub const fn wrapping_pow(self, exp: u32) -> Self {
+        Self { inner: self.inner.wrapping_pow_signed(exp) }
     }
 
     /// Raises self to the power of `exp`, using exponentiation by squaring.
@@ -1306,8 +1306,8 @@ impl i256 {
     /// 
     /// assert_eq!(int(-9).pow(9), int(-387_420_489));
     /// ```
-    pub const fn pow(self, rhs: u32) -> Self {
-        Self { inner: self.inner.pow_signed(rhs) }
+    pub const fn pow(self, exp: u32) -> Self {
+        Self { inner: self.inner.pow_signed(exp) }
     }
 }
 
