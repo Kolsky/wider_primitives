@@ -1063,6 +1063,264 @@ impl i256 {
     pub const fn mul(self, rhs: Self) -> Self {
         Self { inner: self.inner.mul_signed(rhs.inner) }
     }
+
+    /// Calculates the quotient when `self` is divided by `rhs`.
+    /// Returns a tuple of the quotient along with a boolean
+    /// indicating whether an arithmetic overflow would occur.
+    /// If an overflow would occur then the wrapped value is returned.
+    /// 
+    /// # Panics
+    /// 
+    /// This function will panic if `rhs == 0`.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// 
+    /// assert_eq!(int(8).overflowing_div(int(3)), (int(2), false));
+    #[doc = concat!("assert_eq!(", typename!(), "::MIN.overflowing_div(int(-1)), (", typename!(), "::MIN, true));")]
+    /// ```
+    /// ```should_panic
+    /// # use wider_primitives::*;
+    #[doc = concat!("let _ = ", typename!(), "::ONE.overflowing_div(", typename!(), "::ZERO);")]
+    /// ```
+    pub const fn overflowing_div(self, rhs: Self) -> (Self, bool) {
+        let (inner, overflows) = self.inner.overflowing_div_signed(rhs.inner);
+        (Self { inner }, overflows)
+    }
+
+    /// Checked integer division. Computes `self / rhs`,
+    /// returning `None` if `rhs == 0` or the division results in overflow.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    #[doc = concat!("let y = ", typename!(), "::MAX;")]
+    #[doc = concat!("let x = y.clear_bit(", typename!(), "::BITS - 2);")]
+    /// 
+    /// assert_eq!(y.checked_div(x), Some(int(2)));
+    /// assert_eq!(y.checked_div(int(0)), None);
+    /// ```
+    pub const fn checked_div(self, rhs: Self) -> Option<Self> {
+        match self.inner.checked_div_signed(rhs.inner) {
+            Some(inner) => Some(Self { inner }),
+            None => None,
+        }
+    }
+
+    /// Saturating integer division. Computes `self / rhs`,
+    /// saturating at numeric bounds instead of overflowing.
+    /// 
+    /// # Panics
+    /// 
+    /// This function will panic if `rhs == 0`.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// 
+    /// assert_eq!(int(8).saturating_div(int(3)), int(2));
+    #[doc = concat!("assert_eq!(", typename!(), "::MIN.saturating_div(int(-1)), ", typename!(), "::MAX);")]
+    /// ```
+    /// ```should_panic
+    /// # use wider_primitives::*;
+    #[doc = concat!("let _ = ", typename!(), "::ONE.saturating_div(", typename!(), "::ZERO);")]
+    /// ```
+    pub const fn saturating_div(self, rhs: Self) -> Self {
+        Self { inner: self.inner.saturating_div_signed(rhs.inner) }
+    }
+
+    /// Wrapping integer division. Computes `self / rhs`,
+    /// wrapping at numeric bounds instead of overflowing.
+    /// 
+    /// # Panics
+    /// 
+    /// This function will panic if `rhs == 0`.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// 
+    /// assert_eq!(int(8).wrapping_div(int(3)), int(2));
+    #[doc = concat!("assert_eq!(", typename!(), "::MIN.wrapping_div(int(-1)), ", typename!(), "::MIN);")]
+    /// ```
+    /// ```should_panic
+    /// # use wider_primitives::*;
+    #[doc = concat!("let _ = ", typename!(), "::ONE.wrapping_div(", typename!(), "::ZERO);")]
+    /// ```
+    pub const fn wrapping_div(self, rhs: Self) -> Self {
+        Self { inner: self.inner.wrapping_div_signed(rhs.inner) }
+    }
+
+    /// Calculates the division of `self` and `rhs`.
+    /// 
+    /// # Panics
+    /// 
+    /// This function will panic if `rhs == 0` or the division results in overflow.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// 
+    /// assert_eq!(int(8).div(int(3)), int(2));
+    /// assert_eq!(int(8).div(int(-3)), int(-2));
+    /// ```
+    /// ```should_panic
+    /// # use wider_primitives::*;
+    #[doc = concat!("let _ = ", typename!(), "::MIN.div(", typename!(), "::MINUS_ONE);")]
+    /// ```
+    pub const fn div(self, rhs: Self) -> Self {
+        Self { inner: self.inner.div_signed(rhs.inner) }
+    }
+
+    /// Calculates the remainder when `self` is divided by `rhs`.
+    /// Returns a tuple of the remainder along with a boolean
+    /// indicating whether an arithmetic overflow would occur.
+    /// If an overflow would occur then the wrapped value is returned.
+    /// 
+    /// # Panics
+    /// 
+    /// This function will panic if `rhs == 0`.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// 
+    /// assert_eq!(int(8).overflowing_rem(int(3)), (int(2), false));
+    #[doc = concat!("assert_eq!(", typename!(), "::MIN.overflowing_rem(int(-1)), (int(0), true));")]
+    /// ```
+    /// ```should_panic
+    /// # use wider_primitives::*;
+    #[doc = concat!("let _ = ", typename!(), "::ONE.overflowing_rem(", typename!(), "::ZERO);")]
+    /// ```
+    pub const fn overflowing_rem(self, rhs: Self) -> (Self, bool) {
+        let (inner, overflows) = self.inner.overflowing_rem_signed(rhs.inner);
+        (Self { inner }, overflows)
+    }
+
+    /// Checked integer remainder. Computes `self % rhs`,
+    /// returning `None` if `rhs == 0` or the division results in overflow.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    #[doc = concat!("let y = ", typename!(), "::MAX;")]
+    #[doc = concat!("let x = y.clear_bit(", typename!(), "::BITS - 2);")]
+    /// 
+    /// assert_eq!(y.checked_rem(x), Some(int(1)));
+    /// assert_eq!(y.checked_rem(int(0)), None);
+    /// ```
+    pub const fn checked_rem(self, rhs: Self) -> Option<Self> {
+        match self.inner.checked_rem_signed(rhs.inner) {
+            Some(inner) => Some(Self { inner }),
+            None => None,
+        }
+    }
+
+    /// Saturating integer remainder. Computes `self % rhs`,
+    /// saturating at numeric bounds instead of overflowing.
+    /// 
+    /// # Panics
+    /// 
+    /// This function will panic if `rhs == 0`.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// 
+    /// assert_eq!(int(8).saturating_rem(int(3)), int(2));
+    #[doc = concat!("assert_eq!(", typename!(), "::MIN.saturating_rem(int(-1)), int(0));")]
+    /// ```
+    /// ```should_panic
+    /// # use wider_primitives::*;
+    #[doc = concat!("let _ = ", typename!(), "::ONE.saturating_rem(", typename!(), "::ZERO);")]
+    /// ```
+    pub const fn saturating_rem(self, rhs: Self) -> Self {
+        Self { inner: self.inner.saturating_rem_signed(rhs.inner) }
+    }
+
+    /// Wrapping integer remainder. Computes `self % rhs`,
+    /// wrapping at numeric bounds instead of overflowing.
+    /// 
+    /// # Panics
+    /// 
+    /// This function will panic if `rhs == 0`.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// 
+    /// assert_eq!(int(8).wrapping_rem(int(3)), int(2));
+    #[doc = concat!("assert_eq!(", typename!(), "::MIN.wrapping_rem(int(-1)), int(0));")]
+    /// ```
+    /// ```should_panic
+    /// # use wider_primitives::*;
+    #[doc = concat!("let _ = ", typename!(), "::ONE.wrapping_rem(", typename!(), "::ZERO);")]
+    /// ```
+    pub const fn wrapping_rem(self, rhs: Self) -> Self {
+        Self { inner: self.inner.wrapping_rem_signed(rhs.inner) }
+    }
+
+    /// Calculates the remainder of `self` and `rhs`.
+    /// 
+    /// # Panics
+    /// 
+    /// This function will panic if `rhs == 0` or the division results in overflow.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// 
+    /// assert_eq!(int(8).rem(int(3)), int(2));
+    /// assert_eq!(int(8).rem(int(-3)), int(-2));
+    /// ```
+    /// ```should_panic
+    /// # use wider_primitives::*;
+    #[doc = concat!("let _ = ", typename!(), "::MIN.rem(", typename!(), "::MINUS_ONE);")]
+    /// ```
+    pub const fn rem(self, rhs: Self) -> Self {
+        Self { inner: self.inner.rem_signed(rhs.inner) }
+    }
 }
 
 /// # Extended arithmetic operations
@@ -1391,7 +1649,7 @@ impl i256 {
     #[doc = concat!("let int = ", typename!(), "::from_i64;")]
     /// 
     /// assert_eq!(int(8).overflowing_divrem(int(3)), (int(2), int(2), false));
-    #[doc = concat!("assert_eq!(", typename!(), "::MIN.overflowing_divrem(int(-1)), (", typename!(), "::MIN, int(0), true))")]
+    #[doc = concat!("assert_eq!(", typename!(), "::MIN.overflowing_divrem(int(-1)), (", typename!(), "::MIN, int(0), true));")]
     /// ```
     /// ```should_panic
     /// # use wider_primitives::*;
@@ -1441,7 +1699,7 @@ impl i256 {
     #[doc = concat!("let int = ", typename!(), "::from_i64;")]
     /// 
     /// assert_eq!(int(8).saturating_divrem(int(3)), (int(2), int(2)));
-    #[doc = concat!("assert_eq!(", typename!(), "::MIN.saturating_divrem(int(-1)), (", typename!(), "::MAX, int(0)))")]
+    #[doc = concat!("assert_eq!(", typename!(), "::MIN.saturating_divrem(int(-1)), (", typename!(), "::MAX, int(0)));")]
     /// ```
     /// ```should_panic
     /// # use wider_primitives::*;
@@ -1468,7 +1726,7 @@ impl i256 {
     #[doc = concat!("let int = ", typename!(), "::from_i64;")]
     /// 
     /// assert_eq!(int(8).wrapping_divrem(int(3)), (int(2), int(2)));
-    #[doc = concat!("assert_eq!(", typename!(), "::MIN.wrapping_divrem(int(-1)), (", typename!(), "::MIN, int(0)))")]
+    #[doc = concat!("assert_eq!(", typename!(), "::MIN.wrapping_divrem(int(-1)), (", typename!(), "::MIN, int(0)));")]
     /// ```
     /// ```should_panic
     /// # use wider_primitives::*;
