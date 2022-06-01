@@ -966,6 +966,103 @@ impl i256 {
     pub const fn sub(self, rhs: Self) -> Self {
         Self { inner: self.inner.sub_signed(rhs.inner) }
     }
+
+    /// Calculates the multiplication of `self` and `rhs`.
+    /// 
+    /// Returns a tuple of the multiplication along with a boolean
+    /// indicating whether an arithmetic overflow would occur. If an
+    /// overflow would have occurred then the wrapped value is returned.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// assert_eq!(int(5).overflowing_mul(int(-2)), (int(-10), false));
+    #[doc = concat!("assert_eq!(", typename!(), "::MAX.overflowing_mul(int(10)), (int(-10), true));")]
+    /// ```
+    pub const fn overflowing_mul(self, rhs: Self) -> (Self, bool) {
+        let (inner, overflows) = self.inner.overflowing_mul_signed(rhs.inner);
+        (Self { inner }, overflows)
+    }
+
+    /// Checked integer multiplication. Computes `self * rhs`, returning
+    /// `None` if overflow occurred.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_u64;")]
+    /// assert_eq!(int(5).checked_mul(int(1)), Some(int(5)));
+    // #[doc = concat!("assert_eq!(", typename!(), "::MAX.full_mul(int(2)), (i256::MAX.sub(int(1)), int(1)));")]
+    #[doc = concat!("assert_eq!(", typename!(), "::MAX.checked_mul(int(2)), None);")]
+    /// ```
+    pub const fn checked_mul(self, rhs: Self) -> Option<Self> {
+        match self.inner.checked_mul_signed(rhs.inner) {
+            Some(inner) => Some(Self { inner }),
+            None => None,
+        }
+    }
+
+    /// Saturating integer multiplication. Computes `self * rhs`,
+    /// saturating at the numeric bounds instead of overflowing.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// assert_eq!(int(2).saturating_mul(int(10)), int(20));
+    #[doc = concat!("assert_eq!((", typename!(), "::MAX).saturating_mul(int(2)), ", typename!(), "::MAX);")]
+    #[doc = concat!("assert_eq!((", typename!(), "::MAX).saturating_mul(int(-2)), ", typename!(), "::MIN);")]
+    /// ```
+    pub const fn saturating_mul(self, rhs: Self) -> Self {
+        Self { inner: self.inner.saturating_mul_signed(rhs.inner) }
+    }
+
+    /// Wrapping (modular) multiplication. Computes `self *
+    /// rhs`, wrapping around at the boundary of the type.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_u64;")]
+    /// assert_eq!(int(5).wrapping_mul(int(5)), int(25));
+    #[doc = concat!("assert_eq!(", typename!(), "::MAX.wrapping_mul(", typename!(), "::MAX), int(1));")]
+    /// ```
+    pub const fn wrapping_mul(self, rhs: Self) -> Self {
+        Self { inner: self.inner.wrapping_mul(rhs.inner) }
+    }
+
+    /// Calculates the multiplication of `self` and `rhs`.
+    /// 
+    /// # Overflow behavior
+    /// 
+    /// This function panics on overflow in debug mode
+    /// and wraps around the type boundary in release mode. 
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// assert_eq!(int(-91).mul(int(-10_000_000)), int(910_000_000));
+    /// ```
+    pub const fn mul(self, rhs: Self) -> Self {
+        Self { inner: self.inner.mul_signed(rhs.inner) }
+    }
 }
 
 /// # Extended arithmetic operations
@@ -1100,8 +1197,8 @@ impl i256 {
     /// # use wider_primitives::*;
     #[doc = concat!("let int = ", typename!(), "::from_i64;")]
     /// 
-    /// assert_eq!(int(5).overflowing_abs(), Some(int(5)));
-    #[doc = concat!("assert_eq!(", typename!(), "::MIN.overflowing_abs(), None);")]
+    /// assert_eq!(int(5).checked_abs(), Some(int(5)));
+    #[doc = concat!("assert_eq!(", typename!(), "::MIN.checked_abs(), None);")]
     /// ```
     pub const fn checked_abs(self) -> Option<Self> {
         match self.inner.checked_abs() {

@@ -773,7 +773,9 @@ impl<const N: usize> Repr<N> {
     
     pub const fn overflowing_mul_signed(self, rhs: Self) -> (Self, bool) {
         let (lo, hi) = self.full_mul_signed(rhs);
-        (lo, !hi.equals(&Self::ZERO) && !hi.equals(&Self::MINUS_ONE))
+        let neg_inbounds = lo.is_negative() && hi.equals(&Self::MINUS_ONE);
+        let pos_inbounds = !lo.is_negative() && hi.equals(&Self::ZERO);
+        (lo, !(neg_inbounds || pos_inbounds))
     }
 
     pub const fn checked_mul_signed(self, rhs: Self) -> Option<Self> {
