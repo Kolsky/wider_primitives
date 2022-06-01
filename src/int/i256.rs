@@ -1210,6 +1210,36 @@ impl i256 {
         Self { inner: self.inner.signum() }
     }
     
+    /// Calculates the complete product `self * rhs`
+    /// without the possibility to overflow.
+    /// 
+    /// This returns the low-order (wrapping) bits 
+    /// and the high-order (overflow) bits of the result 
+    /// as two separate values, in that order.
+    ///
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("assert_eq!(",
+        typename!(), "::MAX.full_mul(", typename!(), "::MAX), \
+        (", typename!(), "::ONE, ", typename!(), "::MAX.shr(1))\
+    );")]
+    #[doc = concat!("assert_eq!(",
+        typename!(), "::MAX.full_mul(", typename!(), "::MIN), \
+        (", typename!(), "::MIN, ", typename!(), "::MIN.shr(1))\
+    );")]
+    #[doc = concat!("assert_eq!(",
+        typename!(), "::MIN.full_mul(", typename!(), "::MIN), \
+        (", typename!(), "::ZERO, ", typename!(), "::MIN.shr(1).neg())\
+    );")]
+    /// ```
+    pub const fn full_mul(mut self, mut rhs: Self) -> (Self, Self) {
+        (self.inner, rhs.inner) = self.inner.full_mul_signed(rhs.inner);
+        (self, rhs)
+    }
+
     /// Raises self to the power of `exp`, using exponentiation by squaring.
     ///
     /// Returns a tuple of the exponentiation along with a bool indicating
