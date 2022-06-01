@@ -1186,6 +1186,28 @@ impl i256 {
     pub const fn abs_diff(self, rhs: Self) -> u256 {
         u256 { inner: self.inner.abs_diff_signed(rhs.inner) }
     }
+
+    /// Returns a number representing sign of `self`.
+    /// 
+    ///  - `0` if the number is zero
+    ///  - `1` if the number is positive
+    ///  - `-1` if the number is negative
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")] 
+    /// 
+    /// assert_eq!(int(10).signum(), int(1));
+    /// assert_eq!(int(0).signum(), int(0));
+    /// assert_eq!(int(-10).signum(), int(-1));
+    /// ```
+    pub const fn signum(self) -> Self {
+        Self { inner: self.inner.signum() }
+    }
     
     /// Raises self to the power of `exp`, using exponentiation by squaring.
     ///
