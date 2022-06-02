@@ -761,24 +761,12 @@ impl<const N: usize> Repr<N> {
     }
 
     pub const fn overflowing_short_mul_signed(self, rhs: i64) -> (Self, i64) {
-        let (mut lo, mut hi) = self.overflowing_short_mul_unsigned(rhs as u64);
-        let mut add = self.shl(64).wrapping_sub(self);
-        let mut i = N - 1;
-        while i > 0 && rhs < 0 {
-            i -= 1;
-            let adc = add.inner[N - 1];
-            add = add.wrapping_shl(64);
-
+        let (mut lo, mut hi) = self.unsigned_abs().overflowing_short_mul_unsigned(rhs.unsigned_abs());
+        if self.is_negative() ^ rhs.is_negative() {
             let carry;
-            (lo, carry) = lo.carrying_add_unsigned(add, false);
-            (hi, _) = carrying_add(hi, adc, carry);
+            (lo, carry) = lo.not().carrying_add_unsigned(Self::ZERO, true);
+            (hi, _) = carrying_add(!hi, 0, carry);
         }
-        hi = match [self.is_negative(), rhs.is_negative()] {
-            [false, false] => hi,
-            [false, true] => hi.wrapping_sub(self.inner[0]),
-            [true, false] => hi.wrapping_sub(rhs as u64),
-            [true, true] => hi.wrapping_sub(self.inner[0]).wrapping_sub(rhs as u64),
-        };
         (lo, hi as i64)
     }
 
