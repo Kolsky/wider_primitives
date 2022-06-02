@@ -5,6 +5,8 @@ use crate::ParseIntError;
 use crate::Repr;
 use crate::array_pair_to_u128;
 use crate::int::*;
+use crate::uint::u256;
+use crate::uint::u384;
 use crate::uint::u512;
 
 #[cfg_attr(stable, path = "../stable_ops/i512.rs")]
@@ -326,6 +328,34 @@ impl i512 {
     /// ```
     pub const fn from_u128(n: u128) -> Self {
         Self { inner: Repr::from_u128(n) }
+    }
+
+    #[doc = concat!("Constructs [`", typename!(), "`] from [`u256`], without the loss of precision.")]
+    ///
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("assert!(", typename!(), "::from_u256(u256::MAX).lt(", typename!(), "::MAX));")]
+    /// ```
+    pub const fn from_u256(n: u256) -> Self {
+        u512::from_u256(n).as_i512()
+    }
+    
+    #[doc = concat!("Constructs [`", typename!(), "`] from [`u384`], without the loss of precision.")]
+    ///
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("assert!(", typename!(), "::from_u384(u384::MAX).lt(", typename!(), "::MAX));")]
+    /// ```
+    pub const fn from_u384(n: u384) -> Self {
+        u512::from_u384(n).as_i512()
     }
 
     #[doc = concat!("Constructs [`", typename!(), "`] from [`i8`], without the loss of precision.")]

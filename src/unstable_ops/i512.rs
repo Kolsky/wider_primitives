@@ -3,6 +3,8 @@ use core::marker::StructuralPartialEq;
 use core::marker::StructuralEq;
 use core::ops;
 use core::str;
+use crate::u256;
+use crate::u384;
 use crate::i256;
 use crate::i384;
 use crate::i512;
@@ -613,6 +615,19 @@ impl const From<u128> for i512 {
         Self::from_u128(n)
     }
 }
+
+impl const From<u256> for i512 {
+    fn from(n: u256) -> Self {
+        Self::from_u256(n)
+    }
+}
+
+impl const From<u384> for i512 {
+    fn from(n: u384) -> Self {
+        Self::from_u384(n)
+    }
+}
+
 impl const From<i8> for i512 {
     fn from(n: i8) -> Self {
         Self::from_i8(n)

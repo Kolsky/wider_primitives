@@ -560,6 +560,7 @@ impl From<u128> for i256 {
         Self::from_u128(n)
     }
 }
+
 impl From<i8> for i256 {
     fn from(n: i8) -> Self {
         Self::from_i8(n)
