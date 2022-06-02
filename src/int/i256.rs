@@ -1021,8 +1021,8 @@ impl i256 {
     /// # use wider_primitives::*;
     #[doc = concat!("let int = ", typename!(), "::from_i64;")]
     /// assert_eq!(int(2).saturating_short_mul(10), int(20));
-    #[doc = concat!("assert_eq!((", typename!(), "::MAX).saturating_short_mul(2), ", typename!(), "::MAX);")]
-    #[doc = concat!("assert_eq!((", typename!(), "::MAX).saturating_short_mul(-2), ", typename!(), "::MIN);")]
+    #[doc = concat!("assert_eq!(", typename!(), "::MAX.saturating_short_mul(2), ", typename!(), "::MAX);")]
+    #[doc = concat!("assert_eq!(", typename!(), "::MAX.saturating_short_mul(-2), ", typename!(), "::MIN);")]
     /// ```
     pub const fn saturating_short_mul(self, rhs: i64) -> Self {
         Self { inner: self.inner.saturating_short_mul_signed(rhs) }
@@ -1118,8 +1118,8 @@ impl i256 {
     /// # use wider_primitives::*;
     #[doc = concat!("let int = ", typename!(), "::from_i64;")]
     /// assert_eq!(int(2).saturating_mul(int(10)), int(20));
-    #[doc = concat!("assert_eq!((", typename!(), "::MAX).saturating_mul(int(2)), ", typename!(), "::MAX);")]
-    #[doc = concat!("assert_eq!((", typename!(), "::MAX).saturating_mul(int(-2)), ", typename!(), "::MIN);")]
+    #[doc = concat!("assert_eq!(", typename!(), "::MAX.saturating_mul(int(2)), ", typename!(), "::MAX);")]
+    #[doc = concat!("assert_eq!(", typename!(), "::MAX.saturating_mul(int(-2)), ", typename!(), "::MIN);")]
     /// ```
     pub const fn saturating_mul(self, rhs: Self) -> Self {
         Self { inner: self.inner.saturating_mul_signed(rhs.inner) }

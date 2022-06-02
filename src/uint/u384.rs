@@ -952,7 +952,7 @@ impl u384 {
     /// # use wider_primitives::*;
     #[doc = concat!("let uint = ", typename!(), "::from_u64;")]
     /// assert_eq!(uint(2).saturating_short_mul(10), uint(20));
-    #[doc = concat!("assert_eq!((", typename!(), "::MAX).saturating_short_mul(10), ", typename!(), "::MAX);")]
+    #[doc = concat!("assert_eq!(", typename!(), "::MAX.saturating_short_mul(10), ", typename!(), "::MAX);")]
     /// ```
     pub const fn saturating_short_mul(self, rhs: u64) -> Self {
         Self { inner: self.inner.saturating_short_mul_unsigned(rhs) }
@@ -1047,7 +1047,7 @@ impl u384 {
     /// # use wider_primitives::*;
     #[doc = concat!("let uint = ", typename!(), "::from_u64;")]
     /// assert_eq!(uint(2).saturating_mul(uint(10)), uint(20));
-    #[doc = concat!("assert_eq!((", typename!(), "::MAX).saturating_mul(uint(10)), ", typename!(), "::MAX);")]
+    #[doc = concat!("assert_eq!(", typename!(), "::MAX.saturating_mul(uint(10)), ", typename!(), "::MAX);")]
     /// ```
     pub const fn saturating_mul(self, rhs: Self) -> Self {
         Self { inner: self.inner.saturating_mul_unsigned(rhs.inner) }
