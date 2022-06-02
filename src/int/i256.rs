@@ -1436,6 +1436,129 @@ impl i256 {
     /// # use wider_primitives::*;
     #[doc = concat!("let int = ", typename!(), "::from_i64;")]
     /// 
+    /// assert_eq!(int(8).overflowing_short_rem(3), (2, false));
+    #[doc = concat!("assert_eq!(", typename!(), "::MIN.overflowing_short_rem(-1), (0, true));")]
+    /// ```
+    /// ```should_panic
+    /// # use wider_primitives::*;
+    #[doc = concat!("let _ = ", typename!(), "::ONE.overflowing_short_rem(0);")]
+    /// ```
+    pub const fn overflowing_short_rem(self, rhs: i64) -> (i64, bool) {
+        self.inner.overflowing_short_irem_signed(rhs)
+    }
+
+    /// Checked integer remainder. Computes `self % rhs`,
+    /// returning `None` if `rhs == 0` or the division results in overflow.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let y = ", typename!(), "::MAX;")]
+    /// 
+    /// assert_eq!(y.checked_short_rem(2), Some(1));
+    /// assert_eq!(y.checked_short_rem(0), None);
+    /// ```
+    pub const fn checked_short_rem(self, rhs: i64) -> Option<i64> {
+        self.inner.checked_short_irem_signed(rhs)
+    }
+
+    /// Saturating integer remainder. Computes `self % rhs`,
+    /// saturating at numeric bounds instead of overflowing.
+    /// 
+    /// # Panics
+    /// 
+    /// This function will panic if `rhs == 0`.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// 
+    /// assert_eq!(int(8).saturating_short_rem(3), 2);
+    #[doc = concat!("assert_eq!(", typename!(), "::MIN.saturating_short_rem(-1), 0);")]
+    /// ```
+    /// ```should_panic
+    /// # use wider_primitives::*;
+    #[doc = concat!("let _ = ", typename!(), "::ONE.saturating_short_rem(0);")]
+    /// ```
+    pub const fn saturating_short_rem(self, rhs: i64) -> i64 {
+        self.inner.saturating_short_irem_signed(rhs)
+    }
+
+    /// Wrapping integer remainder. Computes `self % rhs`,
+    /// wrapping at numeric bounds instead of overflowing.
+    /// 
+    /// # Panics
+    /// 
+    /// This function will panic if `rhs == 0`.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// 
+    /// assert_eq!(int(8).wrapping_short_rem(3), 2);
+    #[doc = concat!("assert_eq!(", typename!(), "::MIN.wrapping_short_rem(-1), 0);")]
+    /// ```
+    /// ```should_panic
+    /// # use wider_primitives::*;
+    #[doc = concat!("let _ = ", typename!(), "::ONE.wrapping_short_rem(0);")]
+    /// ```
+    pub const fn wrapping_short_rem(self, rhs: i64) -> i64 {
+        self.inner.wrapping_short_irem_signed(rhs)
+    }
+
+    /// Calculates the remainder of `self` and `rhs`.
+    /// 
+    /// # Panics
+    /// 
+    /// This function will panic if `rhs == 0` or the division results in overflow.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// 
+    /// assert_eq!(int(8).short_rem(3), 2);
+    /// assert_eq!(int(8).short_rem(-3), -2);
+    /// ```
+    /// ```should_panic
+    /// # use wider_primitives::*;
+    #[doc = concat!("let _ = ", typename!(), "::MIN.short_rem(-1);")]
+    /// ```
+    pub const fn short_rem(self, rhs: i64) -> i64 {
+        self.inner.short_irem_signed(rhs)
+    }
+
+    /// Calculates the remainder when `self` is divided by `rhs`.
+    /// Returns a tuple of the remainder along with a boolean
+    /// indicating whether an arithmetic overflow would occur.
+    /// If an overflow would occur then the wrapped value is returned.
+    /// 
+    /// # Panics
+    /// 
+    /// This function will panic if `rhs == 0`.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// 
     /// assert_eq!(int(8).overflowing_rem(int(3)), (int(2), false));
     #[doc = concat!("assert_eq!(", typename!(), "::MIN.overflowing_rem(int(-1)), (int(0), true));")]
     /// ```
