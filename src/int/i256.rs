@@ -972,7 +972,7 @@ impl i256 {
     /// Returns a tuple of the multiplication along with i64
     /// containing the high-order (overflowing) bits. Overflow
     /// happens when high-order bits are not equal to
-    /// the signum of result. If an overflow would have occurred
+    /// the sign bit of result. If an overflow would have occurred
     /// then the wrapped value is returned.
     /// 
     /// # Examples
