@@ -760,6 +760,45 @@ impl<const N: usize> Repr<N> {
         self.wrapping_mul(rhs)
     }
 
+    pub const fn overflowing_short_mul_signed(self, rhs: i64) -> (Self, i64) {
+        let (lo, hi) = self.full_mul_signed(Self::from_i64(rhs));
+        (lo, hi.inner[0] as i64)
+    }
+
+    pub const fn checked_short_mul_signed(self, rhs: i64) -> Option<Self> {
+        match self.overflowing_short_mul_signed(rhs) {
+            (val, -1) if val.is_negative() => Some(val),
+            (val, 0) if !val.is_negative() => Some(val),
+            _ => None,
+        }
+    }
+
+    pub const fn saturating_short_mul_signed(self, rhs: i64) -> Self {
+        match self.overflowing_short_mul_signed(rhs) {
+            (val, -1) if val.is_negative() => val,
+            (val, 0) if !val.is_negative() => val,
+            _ if self.is_negative() ^ rhs.is_negative() => Self::MIN_SIGNED,
+            _ => Self::MAX_SIGNED,
+        }
+    }
+
+    pub const fn wrapping_short_mul_signed(self, rhs: i64) -> Self {
+        self.overflowing_short_mul_signed(rhs).0
+    }
+
+    #[cfg(debug)]
+    pub const fn short_mul_signed(self, rhs: i64) -> Self {
+        match self.checked_short_mul_signed(rhs) {
+            Some(val) => val,
+            None => panic!("attempt to multiply with overflow"),
+        }
+    }
+
+    #[cfg(release)]
+    pub const fn short_mul_signed(self, rhs: i64) -> Self {
+        self.wrapping_short_mul_signed(rhs)
+    }
+
     pub const fn full_mul_signed(self, rhs: Self) -> (Self, Self) {
         let (lo, mut hi) = self.full_mul_unsigned(rhs);
         hi = match [self.is_negative(), rhs.is_negative()] {

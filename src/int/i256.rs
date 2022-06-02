@@ -969,6 +969,104 @@ impl i256 {
 
     /// Calculates the multiplication of `self` and `rhs`.
     /// 
+    /// Returns a tuple of the multiplication along with i64
+    /// containing the high-order (overflowing) bits. Overflow
+    /// happens when high-order bits are not equal to
+    /// the signum of result. If an overflow would have occurred
+    /// then the wrapped value is returned.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// assert_eq!(int(5).overflowing_short_mul(-2), (int(-10), -1));
+    #[doc = concat!("assert_eq!(", typename!(), "::MAX.overflowing_short_mul(10), (int(-10), 4));")]
+    /// ```
+    pub const fn overflowing_short_mul(self, rhs: i64) -> (Self, i64) {
+        let (inner, overflows) = self.inner.overflowing_short_mul_signed(rhs);
+        (Self { inner }, overflows)
+    }
+
+    /// Checked integer multiplication. Computes `self * rhs`, returning
+    /// `None` if overflow occurred.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_u64;")]
+    /// assert_eq!(int(5).checked_short_mul(1), Some(int(5)));
+    #[doc = concat!("assert_eq!(", typename!(), "::MAX.checked_short_mul(2), None);")]
+    /// ```
+    pub const fn checked_short_mul(self, rhs: i64) -> Option<Self> {
+        match self.inner.checked_short_mul_signed(rhs) {
+            Some(inner) => Some(Self { inner }),
+            None => None,
+        }
+    }
+
+    /// Saturating integer multiplication. Computes `self * rhs`,
+    /// saturating at the numeric bounds instead of overflowing.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// assert_eq!(int(2).saturating_short_mul(10), int(20));
+    #[doc = concat!("assert_eq!((", typename!(), "::MAX).saturating_short_mul(2), ", typename!(), "::MAX);")]
+    #[doc = concat!("assert_eq!((", typename!(), "::MAX).saturating_short_mul(-2), ", typename!(), "::MIN);")]
+    /// ```
+    pub const fn saturating_short_mul(self, rhs: i64) -> Self {
+        Self { inner: self.inner.saturating_short_mul_signed(rhs) }
+    }
+
+    /// Wrapping (modular) multiplication. Computes `self *
+    /// rhs`, wrapping around at the boundary of the type.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// assert_eq!(int(5).wrapping_short_mul(5), int(25));
+    #[doc = concat!("assert_eq!(", typename!(), "::MAX.wrapping_short_mul(2), int(-2));")]
+    /// ```
+    pub const fn wrapping_short_mul(self, rhs: i64) -> Self {
+        Self { inner: self.inner.wrapping_short_mul_signed(rhs) }
+    }
+
+    /// Calculates the multiplication of `self` and `rhs`.
+    /// 
+    /// # Overflow behavior
+    /// 
+    /// This function panics on overflow in debug mode
+    /// and wraps around the type boundary in release mode. 
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// assert_eq!(int(-91).short_mul(-10_000_000), int(910_000_000));
+    /// ```
+    pub const fn short_mul(self, rhs: i64) -> Self {
+        Self { inner: self.inner.short_mul_signed(rhs) }
+    }
+
+    /// Calculates the multiplication of `self` and `rhs`.
+    /// 
     /// Returns a tuple of the multiplication along with a boolean
     /// indicating whether an arithmetic overflow would occur. If an
     /// overflow would have occurred then the wrapped value is returned.
