@@ -1,40 +1,40 @@
 use core::cmp::Ordering;
 use core::fmt;
-// use core::iter;
+use core::iter;
 use crate::ParseIntError;
 use crate::Repr;
 use crate::array_pair_to_u128;
 use crate::int::*;
 use crate::uint::u256;
 
-// #[cfg_attr(stable, path = "../stable_ops/i256.rs")]
-// #[cfg_attr(unstable, path = "../unstable_ops/i256.rs")]
-// #[cfg_attr(hide_internal, doc(hidden))]
-// pub mod impl_ops;
+#[cfg_attr(stable, path = "../stable_ops/i256.rs")]
+#[cfg_attr(unstable, path = "../unstable_ops/i256.rs")]
+#[cfg_attr(hide_internal, doc(hidden))]
+pub mod impl_ops;
 
-// impl iter::Sum for i256 {
-//     fn sum<I: Iterator<Item = Self>>(iter: I) -> Self {
-//         iter.fold(Self::ZERO, |a, b| a + b)
-//     }
-// }
+impl iter::Sum for i256 {
+    fn sum<I: Iterator<Item = Self>>(iter: I) -> Self {
+        iter.fold(Self::ZERO, |a, b| a + b)
+    }
+}
 
-// impl<'a> iter::Sum<&'a i256> for i256 {
-//     fn sum<I: Iterator<Item = &'a Self>>(iter: I) -> Self {
-//         iter.fold(Self::ZERO, |a, b| a + b)
-//     }
-// }
+impl<'a> iter::Sum<&'a i256> for i256 {
+    fn sum<I: Iterator<Item = &'a Self>>(iter: I) -> Self {
+        iter.fold(Self::ZERO, |a, b| a + b)
+    }
+}
 
-// impl iter::Product for i256 {
-//     fn product<I: Iterator<Item = Self>>(iter: I) -> Self {
-//         iter.fold(Self::ONE, |a, b| a * b)
-//     }
-// }
+impl iter::Product for i256 {
+    fn product<I: Iterator<Item = Self>>(iter: I) -> Self {
+        iter.fold(Self::ONE, |a, b| a * b)
+    }
+}
 
-// impl<'a> iter::Product<&'a i256> for i256 {
-//     fn product<I: Iterator<Item = &'a Self>>(iter: I) -> Self {
-//         iter.fold(Self::ONE, |a, b| a * b)
-//     }
-// }
+impl<'a> iter::Product<&'a i256> for i256 {
+    fn product<I: Iterator<Item = &'a Self>>(iter: I) -> Self {
+        iter.fold(Self::ONE, |a, b| a * b)
+    }
+}
 
 const N: usize = 4;
 
