@@ -1746,6 +1746,140 @@ impl i256 {
     /// # use wider_primitives::*;
     #[doc = concat!("let int = ", typename!(), "::from_i64;")]
     /// 
+    /// assert_eq!(int(8).overflowing_short_divrem(3), (int(2), 2, false));
+    #[doc = concat!("assert_eq!(", typename!(), "::MIN.overflowing_short_divrem(-1), (", typename!(), "::MIN, 0, true));")]
+    /// ```
+    /// ```should_panic
+    /// # use wider_primitives::*;
+    #[doc = concat!("let _ = ", typename!(), "::ONE.overflowing_short_divrem(0);")]
+    /// ```
+    pub const fn overflowing_short_divrem(self, rhs: i64) -> (Self, i64, bool) {
+        let (quot, rem, overflows) = self.inner.overflowing_short_idivrem_signed(rhs);
+        (Self { inner: quot }, rem, overflows)
+    }
+
+    /// Checked integer division and remainder. Computes `self.short_divrem(rhs)`,
+    /// returning `None` if `rhs == 0` or the division results in overflow.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    #[doc = concat!("let y = ", typename!(), "::MAX;")]
+    #[doc = concat!("let x = y.clear_bit(", typename!(), "::BITS - 2);")]
+    /// 
+    /// assert_eq!(y.checked_short_divrem(2), Some((x, 1)));
+    /// assert_eq!(y.checked_short_divrem(0), None);
+    /// ```
+    pub const fn checked_short_divrem(self, rhs: i64) -> Option<(Self, i64)> {
+        match self.inner.checked_short_idivrem_signed(rhs) {
+            Some((quot, rem)) => Some((Self { inner: quot }, rem)),
+            None => None,
+        }
+    }
+
+    /// Saturating integer division and remainder. Computes `self.short_divrem(rhs)`,
+    /// saturating at numeric bounds instead of overflowing.
+    /// 
+    /// # Panics
+    /// 
+    /// This function will panic if `rhs == 0`.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// 
+    /// assert_eq!(int(8).saturating_short_divrem(3), (int(2), 2));
+    #[doc = concat!("assert_eq!(", typename!(), "::MIN.saturating_short_divrem(-1), (", typename!(), "::MAX, 0));")]
+    /// ```
+    /// ```should_panic
+    /// # use wider_primitives::*;
+    #[doc = concat!("let _ = ", typename!(), "::ONE.saturating_short_divrem(0);")]
+    /// ```
+    pub const fn saturating_short_divrem(mut self, mut rhs: i64) -> (Self, i64) {
+        (self.inner, rhs) = self.inner.saturating_short_idivrem_signed(rhs);
+        (self, rhs)
+    }
+
+    /// Wrapping integer division and remainder. Computes `self.short_divrem(rhs)`,
+    /// wrapping at numeric bounds instead of overflowing.
+    /// 
+    /// # Panics
+    /// 
+    /// This function will panic if `rhs == 0`.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// 
+    /// assert_eq!(int(8).wrapping_short_divrem(3), (int(2), 2));
+    #[doc = concat!("assert_eq!(", typename!(), "::MIN.wrapping_short_divrem(-1), (", typename!(), "::MIN, 0));")]
+    /// ```
+    /// ```should_panic
+    /// # use wider_primitives::*;
+    #[doc = concat!("let _ = ", typename!(), "::ONE.wrapping_short_divrem(0);")]
+    /// ```
+    pub const fn wrapping_short_divrem(mut self, mut rhs: i64) -> (Self, i64) {
+        (self.inner, rhs) = self.inner.wrapping_short_idivrem_signed(rhs);
+        (self, rhs)
+    }
+
+    /// Calculates the division and remainder of `self` and `rhs`.
+    /// Slightly more efficient variant of `(self.short_div(rhs), self.short_rem(rhs))`
+    /// provided for convenience.
+    /// 
+    /// # Panics
+    /// 
+    /// This function will panic if `rhs == 0` or the division results in overflow.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// 
+    /// assert_eq!(int(8).short_divrem(3), (int(2), 2));
+    /// assert_eq!(int(8).short_divrem(-3), (int(-2), -2));
+    /// ```
+    /// ```should_panic
+    /// # use wider_primitives::*;
+    #[doc = concat!("let _ = ", typename!(), "::MIN.short_divrem(-1);")]
+    /// ```
+    pub const fn short_divrem(self, rhs: i64) -> (Self, i64) {
+        let (quot, rem) = self.inner.short_idivrem_signed(rhs);
+        (Self { inner: quot }, rem)
+    }
+
+    /// Calculates the quotient and remainder when `self` is divided by `rhs`.
+    /// Returns a tuple of the quotient and remainder along with a boolean
+    /// indicating whether an arithmetic overflow would occur.
+    /// If an overflow would occur then the wrapped value is returned.
+    /// 
+    /// # Panics
+    /// 
+    /// This function will panic if `rhs == 0`.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// 
     /// assert_eq!(int(8).overflowing_divrem(int(3)), (int(2), int(2), false));
     #[doc = concat!("assert_eq!(", typename!(), "::MIN.overflowing_divrem(int(-1)), (", typename!(), "::MIN, int(0), true));")]
     /// ```
