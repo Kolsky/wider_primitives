@@ -531,7 +531,7 @@ impl i384 {
     /// 
     /// ```
     /// # use wider_primitives::*;
-    #[doc = concat!("assert_eq!(", typename!(), "::MAX.as_i256(), i256::MAX);")]
+    #[doc = concat!("assert_eq!(", typename!(), "::MAX.as_i256(), i256::MINUS_ONE);")]
     /// ```
     /// [numeric_cast]: <https://doc.rust-lang.org/reference/expressions/operator-expr.html#numeric-cast>
     pub const fn as_i256(self) -> i256 {
@@ -546,8 +546,7 @@ impl i384 {
     /// 
     /// ```
     /// # use wider_primitives::*;
-    #[doc = concat!("assert!(", typename!(), "::MAX.as_i384().lt(i384::MAX));")]
-    #[doc = concat!("assert!(", typename!(), "::MIN.as_i384().gt(i384::MIN));")]
+    #[doc = concat!("assert!(", typename!(), "::MAX.as_i384().equals(i384::MAX));")]
     /// ```
     /// [numeric_cast]: <https://doc.rust-lang.org/reference/expressions/operator-expr.html#numeric-cast>
     pub const fn as_i384(self) -> i384 {

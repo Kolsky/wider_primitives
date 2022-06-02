@@ -465,8 +465,7 @@ impl u512 {
     /// ```
     /// [numeric_cast]: <https://doc.rust-lang.org/reference/expressions/operator-expr.html#numeric-cast>
     pub const fn as_i512(self) -> i512 {
-        panic!("uncomment once int lands");
-        // i512 { inner: self.inner }
+        i512 { inner: self.inner }
     }
 
     /// Converts a string slice in a given base to an integer.

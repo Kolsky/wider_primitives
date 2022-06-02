@@ -83,9 +83,9 @@ macro_rules! op_in {
 }
 
 macro_rules! op_out {
-    (rotate_left) => { stringify!([2, 4, 6, 0, 0, 0]) };
-    (rotate_right) => { stringify!([2, 3, 0, 0, 0, 1]) };
-    (swap_words) => { stringify!([6, 5, 4, 3, 2, 1]) };
+    (rotate_left) => { stringify!([2, 4, 6, 0, 0, 0, 0, 0]) };
+    (rotate_right) => { stringify!([2, 3, 0, 0, 0, 0, 0, 1]) };
+    (swap_words) => { stringify!([8, 7, 6, 5, 4, 3, 2, 1]) };
     (swap_bytes) => { stringify!("403f3e3d3c3b3a393837363534333231302f2e2d2c2b2a292827262524232221201f1e1d1c1b1a191817161514131211100f0e0d0c0b0a090807060504030201") };
     (reverse_bits) => { stringify!("1e6a2c48091e6a2c48091e6a2c48091e6a2c48091e6a2c48091e6a2c48091e6a2c48091e6a2c48091e6a2c48091e6a2c48091e6a2c48091e6a2c48091e6a2c48") };
 }
@@ -531,7 +531,7 @@ impl i512 {
     /// 
     /// ```
     /// # use wider_primitives::*;
-    #[doc = concat!("assert_eq!(", typename!(), "::MAX.as_i256(), i256::MAX);")]
+    #[doc = concat!("assert_eq!(", typename!(), "::MAX.as_i256(), i256::MINUS_ONE);")]
     /// ```
     /// [numeric_cast]: <https://doc.rust-lang.org/reference/expressions/operator-expr.html#numeric-cast>
     pub const fn as_i256(self) -> i256 {
@@ -562,8 +562,7 @@ impl i512 {
     /// 
     /// ```
     /// # use wider_primitives::*;
-    #[doc = concat!("assert!(", typename!(), "::MAX.as_i512().lt(i512::MAX));")]
-    #[doc = concat!("assert!(", typename!(), "::MIN.as_i512().gt(i512::MIN));")]
+    #[doc = concat!("assert!(", typename!(), "::MAX.as_i512().equals(i512::MAX));")]
     /// ```
     /// [numeric_cast]: <https://doc.rust-lang.org/reference/expressions/operator-expr.html#numeric-cast>
     pub const fn as_i512(self) -> i512 {
