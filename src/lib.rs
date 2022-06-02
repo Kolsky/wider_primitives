@@ -25,7 +25,7 @@ pub mod int;
 #[doc(inline)]
 pub use int::i256;
 
-#[doc(hidden)]
+#[doc(inline)]
 pub use int::i384;
 
 #[doc(hidden)]

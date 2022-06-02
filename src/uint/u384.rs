@@ -465,8 +465,7 @@ impl u384 {
     /// ```
     /// [numeric_cast]: <https://doc.rust-lang.org/reference/expressions/operator-expr.html#numeric-cast>
     pub const fn as_i384(self) -> i384 {
-        panic!("uncomment once int lands");
-        // i384 { inner: self.inner }
+        i384 { inner: self.inner }
     }
 
     /// Converts a string slice in a given base to an integer.
