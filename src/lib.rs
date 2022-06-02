@@ -28,7 +28,7 @@ pub use int::i256;
 #[doc(inline)]
 pub use int::i384;
 
-#[doc(hidden)]
+#[doc(inline)]
 pub use int::i512;
 
 enum UnaryBitOp {

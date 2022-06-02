@@ -5,89 +5,89 @@ use crate::ParseIntError;
 use crate::Repr;
 use crate::array_pair_to_u128;
 use crate::int::*;
-use crate::uint::u384;
+use crate::uint::u512;
 
-#[cfg_attr(stable, path = "../stable_ops/i384.rs")]
-#[cfg_attr(unstable, path = "../unstable_ops/i384.rs")]
+#[cfg_attr(stable, path = "../stable_ops/i512.rs")]
+#[cfg_attr(unstable, path = "../unstable_ops/i512.rs")]
 #[cfg_attr(hide_internal, doc(hidden))]
 pub mod impl_ops;
 
-impl iter::Sum for i384 {
+impl iter::Sum for i512 {
     fn sum<I: Iterator<Item = Self>>(iter: I) -> Self {
         iter.fold(Self::ZERO, |a, b| a + b)
     }
 }
 
-impl<'a> iter::Sum<&'a i384> for i384 {
+impl<'a> iter::Sum<&'a i512> for i512 {
     fn sum<I: Iterator<Item = &'a Self>>(iter: I) -> Self {
         iter.fold(Self::ZERO, |a, b| a + b)
     }
 }
 
-impl iter::Product for i384 {
+impl iter::Product for i512 {
     fn product<I: Iterator<Item = Self>>(iter: I) -> Self {
         iter.fold(Self::ONE, |a, b| a * b)
     }
 }
 
-impl<'a> iter::Product<&'a i384> for i384 {
+impl<'a> iter::Product<&'a i512> for i512 {
     fn product<I: Iterator<Item = &'a Self>>(iter: I) -> Self {
         iter.fold(Self::ONE, |a, b| a * b)
     }
 }
 
-const N: usize = 6;
+const N: usize = 8;
 
 macro_rules! typename {
     () => {
-        stringify!(i384)
+        stringify!(i512)
     };
 }
 
 macro_rules! utypename {
     () => {
-        stringify!(u384)
+        stringify!(u512)
     };
 }
 
 macro_rules! typesize {
     () => {
-        384
+        512
     };
 }
 
 macro_rules! sign_bit {
     () => {
-        383
+        511
     };
 }
 
 macro_rules! min_value {
     () => {
-        "-19701003098197239606139520050071806902539869635232723333974146702122860885748605305707133127442457820403313995153408"
+        "-6703903964971298549787012499102923063739682910296196688861780721860882015036773488400937149083451713845015929093243025426876941405973284973216824503042048"
     };
 }
 
 macro_rules! max_value {
     () => {
-        "19701003098197239606139520050071806902539869635232723333974146702122860885748605305707133127442457820403313995153407"
+        "6703903964971298549787012499102923063739682910296196688861780721860882015036773488400937149083451713845015929093243025426876941405973284973216824503042047"
     };
 }
 
 macro_rules! op_in {
-    (rotate_left) => { stringify!([2, 3, 0, 0, 0, 1]) };
-    (rotate_right) => { stringify!([2, 4, 6, 0, 0, 0]) };
-    (swap_words) => { stringify!([1, 2, 3, 4, 5, 6]) };
-    (swap_bytes) => { stringify!("0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f30") };
-    (reverse_bits) => { stringify!("123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456") };
+    (rotate_left) => { stringify!([2, 3, 0, 0, 0, 0, 0, 1]) };
+    (rotate_right) => { stringify!([2, 4, 6, 0, 0, 0, 0, 0]) };
+    (swap_words) => { stringify!([1, 2, 3, 4, 5, 6, 7, 8]) };
+    (swap_bytes) => { stringify!("0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f40") };
+    (reverse_bits) => { stringify!("12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678") };
 }
 
 macro_rules! op_out {
     (rotate_left) => { stringify!([2, 4, 6, 0, 0, 0]) };
     (rotate_right) => { stringify!([2, 3, 0, 0, 0, 1]) };
     (swap_words) => { stringify!([6, 5, 4, 3, 2, 1]) };
-    (swap_bytes) => { stringify!("302f2e2d2c2b2a292827262524232221201f1e1d1c1b1a191817161514131211100f0e0d0c0b0a090807060504030201") };
-    (reverse_bits) => { stringify!("6a2c48091e6a2c48091e6a2c48091e6a2c48091e6a2c48091e6a2c48091e6a2c48091e6a2c48091e6a2c48091e6a2c48") };
+    (swap_bytes) => { stringify!("403f3e3d3c3b3a393837363534333231302f2e2d2c2b2a292827262524232221201f1e1d1c1b1a191817161514131211100f0e0d0c0b0a090807060504030201") };
+    (reverse_bits) => { stringify!("1e6a2c48091e6a2c48091e6a2c48091e6a2c48091e6a2c48091e6a2c48091e6a2c48091e6a2c48091e6a2c48091e6a2c48091e6a2c48091e6a2c48091e6a2c48") };
 }
 
 #[allow(non_camel_case_types)]
@@ -103,48 +103,48 @@ macro_rules! op_out {
 /// 3. [Basic arithmetic operations](#impl-2)
 /// 4. [Extended arithmetic operations](#impl-3)
 /// 5. [Bit manipulation](#impl-4)
-pub struct i384 {
+pub struct i512 {
     pub(crate) inner: Repr<N>,
 }
 
-impl fmt::Debug for i384 {
+impl fmt::Debug for i512 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         crate::debug_fmt(&self.inner, typename!(), f, |val, f| val.fmt(f))
     }
 }
 
-impl fmt::Display for i384 {
+impl fmt::Display for i512 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         crate::fmt_signed(&self.inner, f)
     }
 }
 
-impl fmt::Binary for i384 {
+impl fmt::Binary for i512 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         crate::fmt_binary(&self.inner, f)
     }
 }
 
-impl fmt::Octal for i384 {
+impl fmt::Octal for i512 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         crate::fmt_octal(&self.inner, f)
     }
 }
 
-impl fmt::LowerHex for i384 {
+impl fmt::LowerHex for i512 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         crate::fmt_lower_hex(&self.inner, f)
     }
 }
 
-impl fmt::UpperHex for i384 {
+impl fmt::UpperHex for i512 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         crate::fmt_upper_hex(&self.inner, f)
     }
 }
 
 /// # C3 (Constants, Constructors, Casts)
-impl i384 {
+impl i512 {
     /// The size of this integer type in bits.
     /// 
     /// # Examples
@@ -402,7 +402,7 @@ impl i384 {
     pub const fn from_i128(n: i128) -> Self {
         Self { inner: Repr::from_i128(n) }
     }
-
+    
     #[doc = concat!("Constructs [`", typename!(), "`] from [`i256`], without the loss of precision.")]
     ///
     /// # Examples
@@ -418,7 +418,7 @@ impl i384 {
         Self { inner: n.inner.as_cast_signed() }
     }
     
-    /// Converts `self` to [`i512`](crate::i512), without the loss of precision.
+    #[doc = concat!("Constructs [`", typename!(), "`] from [`i384`], without the loss of precision.")]
     ///
     /// # Examples
     /// 
@@ -426,14 +426,14 @@ impl i384 {
     /// 
     /// ```
     /// # use wider_primitives::*;
-    #[doc = concat!("assert!(", typename!(), "::MAX.into_i512().lt(i512::MAX));")]
-    #[doc = concat!("assert!(", typename!(), "::MIN.into_i512().gt(i512::MIN));")]
+    #[doc = concat!("assert!(", typename!(), "::from_i384(i384::MAX).lt(", typename!(), "::MAX));")]
+    #[doc = concat!("assert!(", typename!(), "::from_i384(i384::MIN).gt(", typename!(), "::MIN));")]
     /// ```
-    pub const fn into_i512(self) -> i512 {
-        i512::from_inner(self.inner.as_cast_signed().into_inner())
+    pub const fn from_i384(n: i384) -> Self {
+        Self { inner: n.inner.as_cast_signed() }
     }
 
-    /// Casts `self` to [`u384`] based on semantics explained in [The Rust Reference][numeric_cast].
+    /// Casts `self` to [`u512`] based on semantics explained in [The Rust Reference][numeric_cast].
     /// 
     /// # Examples
     /// 
@@ -441,11 +441,11 @@ impl i384 {
     /// 
     /// ```
     /// # use wider_primitives::*;
-    #[doc = concat!("assert_eq!(", typename!(), "::MINUS_ONE.as_u384(), u384::MAX);")]
+    #[doc = concat!("assert_eq!(", typename!(), "::MINUS_ONE.as_u512(), u512::MAX);")]
     /// ```
     /// [numeric_cast]: <https://doc.rust-lang.org/reference/expressions/operator-expr.html#numeric-cast>
-    pub const fn as_u384(self) -> u384 {
-        u384 { inner: self.inner }
+    pub const fn as_u512(self) -> u512 {
+        u512 { inner: self.inner }
     }
 
     /// Casts `self` to [`i8`] based on semantics explained in [The Rust Reference][numeric_cast].
@@ -551,7 +551,7 @@ impl i384 {
     /// ```
     /// [numeric_cast]: <https://doc.rust-lang.org/reference/expressions/operator-expr.html#numeric-cast>
     pub const fn as_i384(self) -> i384 {
-        self
+        i384 { inner: self.inner.as_cast_signed() }
     }
 
     /// Casts `self` to [`i512`](crate::i512) based on semantics explained in [The Rust Reference][numeric_cast].
@@ -567,7 +567,7 @@ impl i384 {
     /// ```
     /// [numeric_cast]: <https://doc.rust-lang.org/reference/expressions/operator-expr.html#numeric-cast>
     pub const fn as_i512(self) -> i512 {
-        self.into_i512()
+        self
     }
 
     /// Converts a string slice in a given base to an integer.
@@ -664,7 +664,7 @@ impl i384 {
 }
 
 /// # Equality and comparison
-impl i384 {
+impl i512 {
     /// Tests if `self == other`.
     /// 
     /// # Examples
@@ -769,7 +769,7 @@ impl i384 {
 }
 
 /// # Basic arithmetic operations
-impl i384 {
+impl i512 {
     /// Calculates `self + rhs`.
     /// 
     /// Returns a tuple of the addition along with a boolean indicating
@@ -1673,7 +1673,7 @@ impl i384 {
 }
 
 /// # Extended arithmetic operations
-impl i384 {
+impl i512 {
     /// Negates self, overflowing if this is equal to the minimum value.
     /// 
     /// Returns a tuple of the negated version of self along with a boolean indicating whether an overflow
@@ -1888,8 +1888,8 @@ impl i384 {
     /// # use wider_primitives::*;
     #[doc = concat!("assert_eq!(", typename!(), "::MIN.abs_diff(", typename!(), "::MAX), ", utypename!(), "::MAX);")]
     /// ```
-    pub const fn abs_diff(self, other: Self) -> u384 {
-        u384 { inner: self.inner.abs_diff_signed(other.inner) }
+    pub const fn abs_diff(self, other: Self) -> u512 {
+        u512 { inner: self.inner.abs_diff_signed(other.inner) }
     }
 
     /// Returns a number representing sign of `self`.
@@ -2350,7 +2350,7 @@ impl i384 {
 }
 
 /// # Bit manipulation
-impl i384 {
+impl i512 {
     /// Returns the state of `i`th bit.
     /// 
     /// # Panics

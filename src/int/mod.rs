@@ -12,5 +12,9 @@ pub mod i384_module;
 #[doc(inline)]
 pub use i384_module::i384;
 
-#[allow(non_camel_case_types)]
-pub type i512 = i256;
+#[path ="i512.rs"]
+#[cfg_attr(hide_internal, doc(hidden))]
+pub mod i512_module;
+
+#[doc(inline)]
+pub use i512_module::i512;

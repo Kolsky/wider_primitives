@@ -5,32 +5,33 @@ use core::ops;
 use core::str;
 use crate::i256;
 use crate::i384;
+use crate::i512;
 
-impl const Default for i384 {
+impl const Default for i512 {
     fn default() -> Self {
         Self::ZERO
     }
 }
 
-impl const cmp::PartialEq for i384 {
+impl const cmp::PartialEq for i512 {
     fn eq(&self, other: &Self) -> bool {
         self.inner.equals(&other.inner)
     }
 }
 
-impl Eq for i384 {}
+impl Eq for i512 {}
 
-impl StructuralPartialEq for i384 {}
+impl StructuralPartialEq for i512 {}
 
-impl StructuralEq for i384 {}
+impl StructuralEq for i512 {}
 
-impl const cmp::PartialOrd for i384 {
+impl const cmp::PartialOrd for i512 {
     fn partial_cmp(&self, other: &Self) -> Option<cmp::Ordering> {
         Some(self.cmp(other))
     }
 }
 
-impl const cmp::Ord for i384 {
+impl const cmp::Ord for i512 {
     fn cmp(&self, other: &Self) -> cmp::Ordering {
         self.inner.compare_unsigned(&other.inner)
     }
@@ -67,15 +68,15 @@ impl const cmp::Ord for i384 {
     }
 }
 
-impl const ops::Neg for &i384 {
-    type Output = i384;
+impl ops::Neg for &i512 {
+    type Output = i512;
 
     fn neg(self) -> Self::Output {
         (*self).neg()
     }
 }
 
-impl const ops::Neg for i384 {
+impl ops::Neg for i512 {
     type Output = Self;
 
     fn neg(self) -> Self::Output {
@@ -83,31 +84,31 @@ impl const ops::Neg for i384 {
     }
 }
 
-impl const ops::Add for &i384 {
-    type Output = i384;
+impl ops::Add for &i512 {
+    type Output = i512;
 
     fn add(self, rhs: Self) -> Self::Output {
         (*self).add(*rhs)
     }
 }
 
-impl const ops::Add<i384> for &i384 {
-    type Output = i384;
+impl ops::Add<i512> for &i512 {
+    type Output = i512;
 
-    fn add(self, rhs: i384) -> Self::Output {
+    fn add(self, rhs: i512) -> Self::Output {
         (*self).add(rhs)
     }
 }
 
-impl const ops::Add<&i384> for i384 {
+impl ops::Add<&i512> for i512 {
     type Output = Self;
 
-    fn add(self, rhs: &i384) -> Self::Output {
+    fn add(self, rhs: &i512) -> Self::Output {
         self.add(*rhs)
     }
 }
 
-impl const ops::Add for i384 {
+impl ops::Add for i512 {
     type Output = Self;
 
     fn add(self, rhs: Self) -> Self::Output {
@@ -115,43 +116,43 @@ impl const ops::Add for i384 {
     }
 }
 
-impl const ops::AddAssign for i384 {
+impl ops::AddAssign for i512 {
     fn add_assign(&mut self, rhs: Self) {
         *self = *self + rhs;
     }
 }
 
-impl const ops::AddAssign<&i384> for i384 {
-    fn add_assign(&mut self, rhs: &i384) {
+impl ops::AddAssign<&i512> for i512 {
+    fn add_assign(&mut self, rhs: &i512) {
         *self = *self + *rhs;
     }
 }
 
-impl const ops::Sub for &i384 {
-    type Output = i384;
+impl ops::Sub for &i512 {
+    type Output = i512;
 
     fn sub(self, rhs: Self) -> Self::Output {
         (*self).sub(*rhs)
     }
 }
 
-impl const ops::Sub<i384> for &i384 {
-    type Output = i384;
+impl ops::Sub<i512> for &i512 {
+    type Output = i512;
 
-    fn sub(self, rhs: i384) -> Self::Output {
+    fn sub(self, rhs: i512) -> Self::Output {
         (*self).sub(rhs)
     }
 }
 
-impl const ops::Sub<&i384> for i384 {
+impl ops::Sub<&i512> for i512 {
     type Output = Self;
 
-    fn sub(self, rhs: &i384) -> Self::Output {
+    fn sub(self, rhs: &i512) -> Self::Output {
         self.sub(*rhs)
     }
 }
 
-impl const ops::Sub for i384 {
+impl ops::Sub for i512 {
     type Output = Self;
 
     fn sub(self, rhs: Self) -> Self::Output {
@@ -159,75 +160,75 @@ impl const ops::Sub for i384 {
     }
 }
 
-impl const ops::SubAssign for i384 {
+impl ops::SubAssign for i512 {
     fn sub_assign(&mut self, rhs: Self) {
         *self = *self - rhs;
     }
 }
 
-impl const ops::SubAssign<&i384> for i384 {
-    fn sub_assign(&mut self, rhs: &i384) {
+impl ops::SubAssign<&i512> for i512 {
+    fn sub_assign(&mut self, rhs: &i512) {
         *self = *self - *rhs;
     }
 }
 
-impl const ops::Mul<&i64> for &i384 {
-    type Output = i384;
+impl ops::Mul<&i64> for &i512 {
+    type Output = i512;
 
     fn mul(self, rhs: &i64) -> Self::Output {
         (*self).short_mul(*rhs)
     }
 }
 
-impl const ops::Mul<i64> for &i384 {
-    type Output = i384;
+impl ops::Mul<i64> for &i512 {
+    type Output = i512;
 
     fn mul(self, rhs: i64) -> Self::Output {
         (*self).short_mul(rhs)
     }
 }
 
-impl const ops::Mul<&i64> for i384 {
-    type Output = i384;
+impl ops::Mul<&i64> for i512 {
+    type Output = i512;
 
     fn mul(self, rhs: &i64) -> Self::Output {
         self.short_mul(*rhs)
     }
 }
 
-impl const ops::Mul<i64> for i384 {
-    type Output = i384;
+impl ops::Mul<i64> for i512 {
+    type Output = i512;
 
     fn mul(self, rhs: i64) -> Self::Output {
         self.short_mul(rhs)
     }
 }
 
-impl const ops::Mul for &i384 {
-    type Output = i384;
+impl ops::Mul for &i512 {
+    type Output = i512;
 
     fn mul(self, rhs: Self) -> Self::Output {
         (*self).mul(*rhs)
     }
 }
 
-impl const ops::Mul<i384> for &i384 {
-    type Output = i384;
+impl ops::Mul<i512> for &i512 {
+    type Output = i512;
 
-    fn mul(self, rhs: i384) -> Self::Output {
+    fn mul(self, rhs: i512) -> Self::Output {
         (*self).mul(rhs)
     }
 }
 
-impl const ops::Mul<&i384> for i384 {
+impl ops::Mul<&i512> for i512 {
     type Output = Self;
 
-    fn mul(self, rhs: &i384) -> Self::Output {
+    fn mul(self, rhs: &i512) -> Self::Output {
         self.mul(*rhs)
     }
 }
 
-impl const ops::Mul for i384 {
+impl ops::Mul for i512 {
     type Output = Self;
 
     fn mul(self, rhs: Self) -> Self::Output {
@@ -235,87 +236,87 @@ impl const ops::Mul for i384 {
     }
 }
 
-impl const ops::MulAssign for i384 {
+impl ops::MulAssign for i512 {
     fn mul_assign(&mut self, rhs: Self) {
         *self = *self * rhs;
     }
 }
 
-impl const ops::MulAssign<&i384> for i384 {
-    fn mul_assign(&mut self, rhs: &i384) {
+impl ops::MulAssign<&i512> for i512 {
+    fn mul_assign(&mut self, rhs: &i512) {
         *self = *self * *rhs;
     }
 }
 
-impl const ops::MulAssign<i64> for i384 {
+impl ops::MulAssign<i64> for i512 {
     fn mul_assign(&mut self, rhs: i64) {
         *self = *self * rhs;
     }
 }
 
-impl const ops::MulAssign<&i64> for i384 {
+impl ops::MulAssign<&i64> for i512 {
     fn mul_assign(&mut self, rhs: &i64) {
         *self = *self * *rhs;
     }
 }
 
-impl const ops::Div<&i64> for &i384 {
-    type Output = i384;
+impl ops::Div<&i64> for &i512 {
+    type Output = i512;
 
     fn div(self, rhs: &i64) -> Self::Output {
         (*self).short_div(*rhs)
     }
 }
 
-impl const ops::Div<i64> for &i384 {
-    type Output = i384;
+impl ops::Div<i64> for &i512 {
+    type Output = i512;
 
     fn div(self, rhs: i64) -> Self::Output {
         (*self).short_div(rhs)
     }
 }
 
-impl const ops::Div<&i64> for i384 {
-    type Output = i384;
+impl ops::Div<&i64> for i512 {
+    type Output = i512;
 
     fn div(self, rhs: &i64) -> Self::Output {
         self.short_div(*rhs)
     }
 }
 
-impl const ops::Div<i64> for i384 {
-    type Output = i384;
+impl ops::Div<i64> for i512 {
+    type Output = i512;
 
     fn div(self, rhs: i64) -> Self::Output {
         self.short_div(rhs)
     }
 }
 
-impl const ops::Div for &i384 {
-    type Output = i384;
+impl ops::Div for &i512 {
+    type Output = i512;
 
     fn div(self, rhs: Self) -> Self::Output {
         (*self).div(*rhs)
     }
 }
 
-impl const ops::Div<i384> for &i384 {
-    type Output = i384;
+impl ops::Div<i512> for &i512 {
+    type Output = i512;
 
-    fn div(self, rhs: i384) -> Self::Output {
+    fn div(self, rhs: i512) -> Self::Output {
         (*self).div(rhs)
     }
 }
 
-impl const ops::Div<&i384> for i384 {
+impl ops::Div<&i512> for i512 {
     type Output = Self;
 
-    fn div(self, rhs: &i384) -> Self::Output {
+    fn div(self, rhs: &i512) -> Self::Output {
         self.div(*rhs)
     }
 }
 
-impl const ops::Div for i384 {
+impl ops::Div for i512 {
     type Output = Self;
 
     fn div(self, rhs: Self) -> Self::Output {
@@ -323,31 +324,31 @@ impl const ops::Div for i384 {
     }
 }
 
-impl const ops::DivAssign for i384 {
+impl ops::DivAssign for i512 {
     fn div_assign(&mut self, rhs: Self) {
         *self = *self / rhs;
     }
 }
 
-impl const ops::DivAssign<&i384> for i384 {
-    fn div_assign(&mut self, rhs: &i384) {
+impl ops::DivAssign<&i512> for i512 {
+    fn div_assign(&mut self, rhs: &i512) {
         *self = *self / *rhs;
     }
 }
 
-impl const ops::DivAssign<i64> for i384 {
+impl ops::DivAssign<i64> for i512 {
     fn div_assign(&mut self, rhs: i64) {
         *self = *self / rhs;
     }
 }
 
-impl const ops::DivAssign<&i64> for i384 {
+impl ops::DivAssign<&i64> for i512 {
     fn div_assign(&mut self, rhs: &i64) {
         *self = *self / *rhs;
     }
 }
 
-impl const ops::Rem<&i64> for &i384 {
+impl ops::Rem<&i64> for &i512 {
     type Output = i64;
 
     fn rem(self, rhs: &i64) -> Self::Output {
@@ -355,7 +356,7 @@ impl const ops::Rem<&i64> for &i384 {
     }
 }
 
-impl const ops::Rem<i64> for &i384 {
+impl ops::Rem<i64> for &i512 {
     type Output = i64;
 
     fn rem(self, rhs: i64) -> Self::Output {
@@ -363,7 +364,7 @@ impl const ops::Rem<i64> for &i384 {
     }
 }
 
-impl const ops::Rem<&i64> for i384 {
+impl ops::Rem<&i64> for i512 {
     type Output = i64;
 
     fn rem(self, rhs: &i64) -> Self::Output {
@@ -371,7 +372,7 @@ impl const ops::Rem<&i64> for i384 {
     }
 }
 
-impl const ops::Rem<i64> for i384 {
+impl ops::Rem<i64> for i512 {
     type Output = i64;
 
     fn rem(self, rhs: i64) -> Self::Output {
@@ -379,31 +380,31 @@ impl const ops::Rem<i64> for i384 {
     }
 }
 
-impl const ops::Rem for &i384 {
-    type Output = i384;
+impl ops::Rem for &i512 {
+    type Output = i512;
 
     fn rem(self, rhs: Self) -> Self::Output {
         (*self).rem(*rhs)
     }
 }
 
-impl const ops::Rem<i384> for &i384 {
-    type Output = i384;
+impl ops::Rem<i512> for &i512 {
+    type Output = i512;
 
-    fn rem(self, rhs: i384) -> Self::Output {
+    fn rem(self, rhs: i512) -> Self::Output {
         (*self).rem(rhs)
     }
 }
 
-impl const ops::Rem<&i384> for i384 {
+impl ops::Rem<&i512> for i512 {
     type Output = Self;
 
-    fn rem(self, rhs: &i384) -> Self::Output {
+    fn rem(self, rhs: &i512) -> Self::Output {
         self.rem(*rhs)
     }
 }
 
-impl const ops::Rem for i384 {
+impl ops::Rem for i512 {
     type Output = Self;
 
     fn rem(self, rhs: Self) -> Self::Output {
@@ -411,31 +412,31 @@ impl const ops::Rem for i384 {
     }
 }
 
-impl const ops::RemAssign for i384 {
+impl ops::RemAssign for i512 {
     fn rem_assign(&mut self, rhs: Self) {
         *self = *self % rhs;
     }
 }
 
-impl const ops::RemAssign<&i384> for i384 {
-    fn rem_assign(&mut self, rhs: &i384) {
+impl ops::RemAssign<&i512> for i512 {
+    fn rem_assign(&mut self, rhs: &i512) {
         *self = *self % *rhs;
     }
 }
 
-impl const ops::RemAssign<i64> for i384 {
+impl ops::RemAssign<i64> for i512 {
     fn rem_assign(&mut self, rhs: i64) {
         *self = Self::from_i64(*self % rhs);
     }
 }
 
-impl const ops::RemAssign<&i64> for i384 {
+impl ops::RemAssign<&i64> for i512 {
     fn rem_assign(&mut self, rhs: &i64) {
         *self = Self::from_i64(*self % *rhs);
     }
 }
 
-impl const ops::Not for i384 {
+impl ops::Not for i512 {
     type Output = Self;
 
     fn not(self) -> Self::Output {
@@ -443,39 +444,39 @@ impl const ops::Not for i384 {
     }
 }
 
-impl const ops::Not for &i384 {
-    type Output = i384;
+impl ops::Not for &i512 {
+    type Output = i512;
 
     fn not(self) -> Self::Output {
         (*self).not()
     }
 }
 
-impl const ops::BitAnd for &i384 {
-    type Output = i384;
+impl ops::BitAnd for &i512 {
+    type Output = i512;
 
     fn bitand(self, rhs: Self) -> Self::Output {
         (*self).bitand(*rhs)
     }
 }
 
-impl const ops::BitAnd<i384> for &i384 {
-    type Output = i384;
+impl ops::BitAnd<i512> for &i512 {
+    type Output = i512;
 
-    fn bitand(self, rhs: i384) -> Self::Output {
+    fn bitand(self, rhs: i512) -> Self::Output {
         (*self).bitand(rhs)
     }
 }
 
-impl const ops::BitAnd<&i384> for i384 {
+impl ops::BitAnd<&i512> for i512 {
     type Output = Self;
 
-    fn bitand(self, rhs: &i384) -> Self::Output {
+    fn bitand(self, rhs: &i512) -> Self::Output {
         self.bitand(*rhs)
     }
 }
 
-impl const ops::BitAnd for i384 {
+impl ops::BitAnd for i512 {
     type Output = Self;
 
     fn bitand(self, rhs: Self) -> Self::Output {
@@ -483,43 +484,43 @@ impl const ops::BitAnd for i384 {
     }
 }
 
-impl const ops::BitAndAssign for i384 {
+impl ops::BitAndAssign for i512 {
     fn bitand_assign(&mut self, rhs: Self) {
         *self = *self & rhs;
     }
 }
 
-impl const ops::BitAndAssign<&i384> for i384 {
+impl ops::BitAndAssign<&i512> for i512 {
     fn bitand_assign(&mut self, rhs: &Self) {
         *self = *self & *rhs;
     }
 }
 
-impl const ops::BitOr for &i384 {
-    type Output = i384;
+impl ops::BitOr for &i512 {
+    type Output = i512;
 
     fn bitor(self, rhs: Self) -> Self::Output {
         (*self).bitor(*rhs)
     }
 }
 
-impl const ops::BitOr<i384> for &i384 {
-    type Output = i384;
+impl ops::BitOr<i512> for &i512 {
+    type Output = i512;
 
-    fn bitor(self, rhs: i384) -> Self::Output {
+    fn bitor(self, rhs: i512) -> Self::Output {
         (*self).bitor(rhs)
     }
 }
 
-impl const ops::BitOr<&i384> for i384 {
+impl ops::BitOr<&i512> for i512 {
     type Output = Self;
 
-    fn bitor(self, rhs: &i384) -> Self::Output {
+    fn bitor(self, rhs: &i512) -> Self::Output {
         self.bitor(*rhs)
     }
 }
 
-impl const ops::BitOr for i384 {
+impl ops::BitOr for i512 {
     type Output = Self;
 
     fn bitor(self, rhs: Self) -> Self::Output {
@@ -527,43 +528,43 @@ impl const ops::BitOr for i384 {
     }
 }
 
-impl const ops::BitOrAssign for i384 {
+impl ops::BitOrAssign for i512 {
     fn bitor_assign(&mut self, rhs: Self) {
         *self = *self | rhs;
     }
 }
 
-impl const ops::BitOrAssign<&i384> for i384 {
+impl ops::BitOrAssign<&i512> for i512 {
     fn bitor_assign(&mut self, rhs: &Self) {
         *self = *self | *rhs;
     }
 }
 
-impl const ops::BitXor for &i384 {
-    type Output = i384;
+impl ops::BitXor for &i512 {
+    type Output = i512;
 
     fn bitxor(self, rhs: Self) -> Self::Output {
         (*self).bitxor(*rhs)
     }
 }
 
-impl const ops::BitXor<i384> for &i384 {
-    type Output = i384;
+impl ops::BitXor<i512> for &i512 {
+    type Output = i512;
 
-    fn bitxor(self, rhs: i384) -> Self::Output {
+    fn bitxor(self, rhs: i512) -> Self::Output {
         (*self).bitxor(rhs)
     }
 }
 
-impl const ops::BitXor<&i384> for i384 {
+impl ops::BitXor<&i512> for i512 {
     type Output = Self;
 
-    fn bitxor(self, rhs: &i384) -> Self::Output {
+    fn bitxor(self, rhs: &i512) -> Self::Output {
         self.bitxor(*rhs)
     }
 }
 
-impl const ops::BitXor for i384 {
+impl ops::BitXor for i512 {
     type Output = Self;
 
     fn bitxor(self, rhs: Self) -> Self::Output {
@@ -571,84 +572,90 @@ impl const ops::BitXor for i384 {
     }
 }
 
-impl const ops::BitXorAssign for i384 {
+impl ops::BitXorAssign for i512 {
     fn bitxor_assign(&mut self, rhs: Self) {
         *self = *self ^ rhs;
     }
 }
 
-impl const ops::BitXorAssign<&i384> for i384 {
+impl ops::BitXorAssign<&i512> for i512 {
     fn bitxor_assign(&mut self, rhs: &Self) {
         *self = *self ^ *rhs;
     }
 }
 
-impl const From<u8> for i384 {
+impl From<u8> for i512 {
     fn from(n: u8) -> Self {
         Self::from_u8(n)
     }
 }
 
-impl const From<u16> for i384 {
+impl From<u16> for i512 {
     fn from(n: u16) -> Self {
         Self::from_u16(n)
     }
 }
 
-impl const From<u32> for i384 {
+impl From<u32> for i512 {
     fn from(n: u32) -> Self {
         Self::from_u32(n)
     }
 }
 
-impl const From<u64> for i384 {
+impl From<u64> for i512 {
     fn from(n: u64) -> Self {
         Self::from_u64(n)
     }
 }
 
-impl const From<u128> for i384 {
+impl From<u128> for i512 {
     fn from(n: u128) -> Self {
         Self::from_u128(n)
     }
 }
-impl const From<i8> for i384 {
+impl From<i8> for i512 {
     fn from(n: i8) -> Self {
         Self::from_i8(n)
     }
 }
 
-impl const From<i16> for i384 {
+impl From<i16> for i512 {
     fn from(n: i16) -> Self {
         Self::from_i16(n)
     }
 }
 
-impl const From<i32> for i384 {
+impl From<i32> for i512 {
     fn from(n: i32) -> Self {
         Self::from_i32(n)
     }
 }
 
-impl const From<i64> for i384 {
+impl From<i64> for i512 {
     fn from(n: i64) -> Self {
         Self::from_i64(n)
     }
 }
 
-impl const From<i128> for i384 {
+impl From<i128> for i512 {
     fn from(n: i128) -> Self {
         Self::from_i128(n)
     }
 }
 
-impl const From<i256> for i384 {
+impl From<i256> for i512 {
     fn from(n: i256) -> Self {
         Self::from_i256(n)
     }
 }
 
-impl const str::FromStr for i384 {
+impl From<i384> for i512 {
+    fn from(n: i384) -> Self {
+        Self::from_i384(n)
+    }
+}
+
+impl str::FromStr for i512 {
     type Err = crate::ParseIntError;
 
     fn from_str(src: &str) -> Result<Self, Self::Err> {
@@ -656,7 +663,7 @@ impl const str::FromStr for i384 {
     }
 }
 
-impl const ops::Shl<&u32> for i384 {
+impl ops::Shl<&u32> for i512 {
     type Output = Self;
 
     fn shl(self, rhs: &u32) -> Self::Output {
@@ -664,7 +671,7 @@ impl const ops::Shl<&u32> for i384 {
     }
 }
 
-impl const ops::Shl<u32> for i384 {
+impl ops::Shl<u32> for i512 {
     type Output = Self;
 
     fn shl(self, rhs: u32) -> Self::Output {
@@ -672,19 +679,19 @@ impl const ops::Shl<u32> for i384 {
     }
 }
 
-impl const ops::ShlAssign<&u32> for i384 {
+impl ops::ShlAssign<&u32> for i512 {
     fn shl_assign(&mut self, rhs: &u32) {
         *self = *self << rhs;
     }
 }
 
-impl const ops::ShlAssign<u32> for i384 {
+impl ops::ShlAssign<u32> for i512 {
     fn shl_assign(&mut self, rhs: u32) {
         *self = *self << rhs;
     }
 }
 
-impl const ops::Shr<&u32> for i384 {
+impl ops::Shr<&u32> for i512 {
     type Output = Self;
 
     fn shr(self, rhs: &u32) -> Self::Output {
@@ -692,7 +699,7 @@ impl const ops::Shr<&u32> for i384 {
     }
 }
 
-impl const ops::Shr<u32> for i384 {
+impl ops::Shr<u32> for i512 {
     type Output = Self;
 
     fn shr(self, rhs: u32) -> Self::Output {
@@ -700,13 +707,13 @@ impl const ops::Shr<u32> for i384 {
     }
 }
 
-impl const ops::ShrAssign<&u32> for i384 {
+impl ops::ShrAssign<&u32> for i512 {
     fn shr_assign(&mut self, rhs: &u32) {
         *self = *self >> rhs;
     }
 }
 
-impl const ops::ShrAssign<u32> for i384 {
+impl ops::ShrAssign<u32> for i512 {
     fn shr_assign(&mut self, rhs: u32) {
         *self = *self >> rhs;
     }
