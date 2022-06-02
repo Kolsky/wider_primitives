@@ -1179,6 +1179,134 @@ impl i256 {
     /// # use wider_primitives::*;
     #[doc = concat!("let int = ", typename!(), "::from_i64;")]
     /// 
+    /// assert_eq!(int(8).overflowing_short_div(3), (int(2), false));
+    #[doc = concat!("assert_eq!(", typename!(), "::MIN.overflowing_short_div(-1), (", typename!(), "::MIN, true));")]
+    /// ```
+    /// ```should_panic
+    /// # use wider_primitives::*;
+    #[doc = concat!("let _ = ", typename!(), "::ONE.overflowing_short_div(0);")]
+    /// ```
+    pub const fn overflowing_short_div(self, rhs: i64) -> (Self, bool) {
+        let (inner, overflows) = self.inner.overflowing_short_idiv_signed(rhs);
+        (Self { inner }, overflows)
+    }
+
+    /// Checked integer division. Computes `self / rhs`,
+    /// returning `None` if `rhs == 0` or the division results in overflow.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let y = ", typename!(), "::MAX;")]
+    #[doc = concat!("let x = y.clear_bit(", typename!(), "::BITS - 2);")]
+    /// 
+    /// assert_eq!(y.checked_short_div(2), Some(x));
+    /// assert_eq!(y.checked_short_div(0), None);
+    /// ```
+    pub const fn checked_short_div(self, rhs: i64) -> Option<Self> {
+        match self.inner.checked_short_idiv_signed(rhs) {
+            Some(inner) => Some(Self { inner }),
+            None => None,
+        }
+    }
+
+    /// Saturating integer division. Computes `self / rhs`,
+    /// saturating at numeric bounds instead of overflowing.
+    /// 
+    /// # Panics
+    /// 
+    /// This function will panic if `rhs == 0`.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// 
+    /// assert_eq!(int(8).saturating_short_div(3), int(2));
+    #[doc = concat!("assert_eq!(", typename!(), "::MIN.saturating_short_div(-1), ", typename!(), "::MAX);")]
+    /// ```
+    /// ```should_panic
+    /// # use wider_primitives::*;
+    #[doc = concat!("let _ = ", typename!(), "::ONE.saturating_short_div(0);")]
+    /// ```
+    pub const fn saturating_short_div(self, rhs: i64) -> Self {
+        Self { inner: self.inner.saturating_short_idiv_signed(rhs) }
+    }
+
+    /// Wrapping integer division. Computes `self / rhs`,
+    /// wrapping at numeric bounds instead of overflowing.
+    /// 
+    /// # Panics
+    /// 
+    /// This function will panic if `rhs == 0`.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// 
+    /// assert_eq!(int(8).wrapping_short_div(3), int(2));
+    #[doc = concat!("assert_eq!(", typename!(), "::MIN.wrapping_short_div(-1), ", typename!(), "::MIN);")]
+    /// ```
+    /// ```should_panic
+    /// # use wider_primitives::*;
+    #[doc = concat!("let _ = ", typename!(), "::ONE.wrapping_short_div(0);")]
+    /// ```
+    pub const fn wrapping_short_div(self, rhs: i64) -> Self {
+        Self { inner: self.inner.wrapping_short_idiv_signed(rhs) }
+    }
+
+    /// Calculates the division of `self` and `rhs`.
+    /// 
+    /// # Panics
+    /// 
+    /// This function will panic if `rhs == 0` or the division results in overflow.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// 
+    /// assert_eq!(int(8).short_div(3), int(2));
+    /// assert_eq!(int(8).short_div(-3), int(-2));
+    /// ```
+    /// ```should_panic
+    /// # use wider_primitives::*;
+    #[doc = concat!("let _ = ", typename!(), "::MIN.short_div(-1);")]
+    /// ```
+    pub const fn short_div(self, rhs: i64) -> Self {
+        Self { inner: self.inner.short_idiv_signed(rhs) }
+    }
+    
+    /// Calculates the quotient when `self` is divided by `rhs`.
+    /// Returns a tuple of the quotient along with a boolean
+    /// indicating whether an arithmetic overflow would occur.
+    /// If an overflow would occur then the wrapped value is returned.
+    /// 
+    /// # Panics
+    /// 
+    /// This function will panic if `rhs == 0`.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// 
     /// assert_eq!(int(8).overflowing_div(int(3)), (int(2), false));
     #[doc = concat!("assert_eq!(", typename!(), "::MIN.overflowing_div(int(-1)), (", typename!(), "::MIN, true));")]
     /// ```
