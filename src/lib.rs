@@ -52,6 +52,30 @@ impl UnaryBitOp {
     }
 }
 
+/// An error which can be returned when parsing an integer.
+///
+/// This error is used as the error type for the `from_str_radix()` functions
+/// on the library integer types, such as [`i256::from_str_radix`].
+/// 
+/// It also supports the conversion to a native [`num::ParseIntError`](core::num::ParseIntError)
+/// type via the [`From`] trait. Note that, although strictly speaking,
+/// the error conversion relies on implementation details of primitive
+/// parse methods, thus the exact behavior is unspecified.
+/// 
+/// # Potential causes
+/// 
+/// Among other causes, `ParseIntError` can be thrown because of leading or trailing whitespace
+/// in the string e.g., when it is obtained from the standard input.
+/// Using the [`str::trim()`] method ensures that no whitespace remains before parsing.
+/// 
+/// # Example
+/// 
+/// ```
+/// # use wider_primitives::*;
+/// if let Err(e) = i256::from_str_radix("a12", 10) {
+///     println!("Failed conversion to i256: {e}");
+/// }
+/// ```
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ParseIntError {
     kind: IntErrorKind,
@@ -72,6 +96,7 @@ impl From<ParseIntError> for core::num::ParseIntError {
 }
 
 impl ParseIntError {
+    /// Outputs the detailed cause of parsing an integer failing.
     pub const fn kind(&self) -> &IntErrorKind {
         &self.kind
     }
