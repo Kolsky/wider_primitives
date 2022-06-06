@@ -1,4 +1,4 @@
-#![doc = include_str!("README.md")]
+#![doc = include_str!("../README.md")]
 #![cfg_attr(not(test), no_std)]
 #![cfg_attr(unstable, feature(const_mut_refs))]
 #![cfg_attr(unstable, feature(const_trait_impl))]
