@@ -1892,6 +1892,27 @@ impl i256 {
         u256 { inner: self.inner.abs_diff_signed(other.inner) }
     }
 
+    /// Computes the absolute value of `self` without any wrapping
+    /// or panicking.
+    /// 
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let uint = ", utypename!(), "::from_u64;")]
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// 
+    /// assert_eq!(int(100).unsigned_abs(), uint(100));
+    /// assert_eq!(int(-100).unsigned_abs(), uint(100));
+    #[doc = concat!("assert_eq!(", typename!(), "::MIN.unsigned_abs(), uint(2).pow(", typename!(), "::BITS - 1));")]
+    /// ```
+    pub const fn unsigned_abs(self) -> u256 {
+        u256 { inner: self.inner.unsigned_abs() }
+    }
+
     /// Returns a number representing sign of `self`.
     /// 
     ///  - `0` if the number is zero
