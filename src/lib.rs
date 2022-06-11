@@ -1800,6 +1800,29 @@ pub fn debug_fmt<const N: usize>(
     f.write_str("]")
 }
 
+fn segmented_fmt_next(
+    past_zero: &mut bool,
+    not_zero: bool,
+    f: &mut fmt::Formatter<'_>,
+    fmt_just_past_zero: impl FnOnce(&mut fmt::Formatter<'_>) -> fmt::Result,
+    fmt_past_zero: impl FnOnce(&mut fmt::Formatter<'_>) -> fmt::Result,
+) -> fmt::Result {
+    if !*past_zero && !not_zero {
+        return Ok(());
+    }
+    match core::mem::replace(past_zero, true) {
+        false => fmt_just_past_zero(f),
+        true => fmt_past_zero(f),
+    }
+}
+
+fn segmented_fmt_end(f: &mut fmt::Formatter<'_>, past_zero: bool) -> fmt::Result {
+    match past_zero {
+        true => Ok(()),
+        false => f.write_str("0"),
+    }
+}
+
 #[cfg_attr(hide_internal, doc(hidden))]
 pub fn fmt_unsigned<const N: usize>(this: &Repr<N>, f: &mut fmt::Formatter<'_>) -> fmt::Result {
     let mut rems = [0; N];
@@ -1813,22 +1836,15 @@ pub fn fmt_unsigned<const N: usize>(this: &Repr<N>, f: &mut fmt::Formatter<'_>) 
         last_rem = None;
     }
     let mut past_zero = false;
-    for rem in &last_rem {
-        past_zero |= rem > &0;
-        if past_zero {
-            fmt::Display::fmt(rem, f)?;
-        }
-    }
-    for rem in rems {
-        past_zero |= rem > 0;
-        if past_zero {
-            write!(f, "{:019}", rem)?;
-        }
-    }
-    match past_zero {
-        true => Ok(()),
-        false => f.write_str("0"),
-    }
+    let fmt = |val| {
+        segmented_fmt_next(
+            &mut past_zero, val > 0, f,
+            |f| fmt::Display::fmt(&val, f),
+            |f| write!(f, "{val:019}"),
+        )
+    };
+    last_rem.into_iter().chain(rems).try_for_each(fmt)?;
+    segmented_fmt_end(f, past_zero)
 }
 
 #[cfg_attr(hide_internal, doc(hidden))]
@@ -1843,39 +1859,42 @@ pub fn fmt_signed<const N: usize>(this: &Repr<N>, f: &mut fmt::Formatter<'_>) ->
 pub fn fmt_binary<const N: usize>(this: &Repr<N>, f: &mut fmt::Formatter<'_>) -> fmt::Result {
     let mut past_zero = false;
     let mut fmt = |val| {
-        past_zero |= val > 0;
-        match past_zero {
-            false => fmt::Binary::fmt(&val, f),
-            true => write!(f, "{val:064b}"),
-        }
+        segmented_fmt_next(
+            &mut past_zero, val > 0, f,
+            |f| fmt::Binary::fmt(&val, f),
+            |f| write!(f, "{val:064b}"),
+        )
     };
-    this.inner.iter().rev().try_for_each(|&val| fmt(val))
+    this.inner.iter().rev().try_for_each(|&val| fmt(val))?;
+    segmented_fmt_end(f, past_zero)
 }
 
 #[cfg_attr(hide_internal, doc(hidden))]
 pub fn fmt_lower_hex<const N: usize>(this: &Repr<N>, f: &mut fmt::Formatter<'_>) -> fmt::Result {
     let mut past_zero = false;
     let mut fmt = |val| {
-        past_zero |= val > 0;
-        match past_zero {
-            false => fmt::LowerHex::fmt(&val, f),
-            true => write!(f, "{val:016x}"),
-        }
+        segmented_fmt_next(
+            &mut past_zero, val > 0, f,
+            |f| fmt::LowerHex::fmt(&val, f),
+            |f| write!(f, "{val:016x}"),
+        )
     };
-    this.inner.iter().rev().try_for_each(|&val| fmt(val))
+    this.inner.iter().rev().try_for_each(|&val| fmt(val))?;
+    segmented_fmt_end(f, past_zero)
 }
 
 #[cfg_attr(hide_internal, doc(hidden))]
 pub fn fmt_upper_hex<const N: usize>(this: &Repr<N>, f: &mut fmt::Formatter<'_>) -> fmt::Result {
     let mut past_zero = false;
     let mut fmt = |val| {
-        past_zero |= val > 0;
-        match past_zero {
-            false => fmt::UpperHex::fmt(&val, f),
-            true => write!(f, "{val:016X}"),
-        }
+        segmented_fmt_next(
+            &mut past_zero, val > 0, f,
+            |f| fmt::UpperHex::fmt(&val, f),
+            |f| write!(f, "{val:016X}"),
+        )
     };
-    this.inner.iter().rev().try_for_each(|&val| fmt(val))
+    this.inner.iter().rev().try_for_each(|&val| fmt(val))?;
+    segmented_fmt_end(f, past_zero)
 }
 
 #[cfg_attr(hide_internal, doc(hidden))]
@@ -1885,12 +1904,12 @@ pub fn fmt_octal<const N: usize>(this: &Repr<N>, f: &mut fmt::Formatter<'_>) -> 
     let mut fmt = |&[x, y, z]: &[u64; 3]| {
         let lo = array_pair_to_u128([x, y]) & (u128::MAX >> 32);
         let hi = array_pair_to_u128([y, z]) >> 32;
-        for val in [hi, lo] {
-            past_zero |= val > 0;
-            match past_zero {
-                false => fmt::Octal::fmt(&val, f)?,
-                true => write!(f, "{val:096o}")?,
-            }
+        for val in [hi, lo] {    
+            segmented_fmt_next(
+                &mut past_zero, val > 0, f,
+                |f| fmt::Octal::fmt(&val, f),
+                |f| write!(f, "{val:032o}"),
+            )?;
         }
         Ok(())
     };
@@ -1901,7 +1920,8 @@ pub fn fmt_octal<const N: usize>(this: &Repr<N>, f: &mut fmt::Formatter<'_>) -> 
     }
     chunks_exact.rev()
         .filter_map(|chunk| chunk.try_into().ok())
-        .try_for_each(fmt)
+        .try_for_each(fmt)?;
+    segmented_fmt_end(f, past_zero)
 }
 
 impl<const N: usize> fmt::Debug for Repr<N> {
