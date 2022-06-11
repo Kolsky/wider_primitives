@@ -101,6 +101,23 @@ impl ParseIntError {
     pub const fn kind(&self) -> &IntErrorKind {
         &self.kind
     }
+
+    const fn description(&self) -> &str {
+        match self.kind {
+            IntErrorKind::Empty => "cannot parse integer from empty string",
+            IntErrorKind::InvalidDigit => "invalid digit found in string",
+            IntErrorKind::PosOverflow => "number too large to fit in target type",
+            IntErrorKind::NegOverflow => "number too small to fit in target type",
+            IntErrorKind::Zero => "number would be zero for non-zero type",
+            _ => "unknown error",
+        }
+    }
+}
+
+impl fmt::Display for ParseIntError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.description().fmt(f)
+    }
 }
 
 #[cfg_attr(hide_internal, doc(hidden))]
@@ -291,18 +308,9 @@ impl<const N: usize> Repr<N> {
     }
 
     const fn from_str_radix_or_panic<const SIGNED: bool>(src: &str, radix: u32) -> Self {
-        use self::ParseIntError as PIE;
-        use self::IntErrorKind::*;
-
         match Self::from_str_radix::<SIGNED>(src, radix) {
             Ok(val) => val,
-            Err(PIE { kind }) => match kind {
-                Empty => panic!("src is empty"),
-                InvalidDigit => panic!("invalid digit"),
-                PosOverflow => panic!("positive overflow"),
-                NegOverflow => panic!("negative overflow"),
-                _ => panic!("unknown error"),
-            }
+            Err(pie) => panic!("{}", pie.description()),
         }
     }
 
