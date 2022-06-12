@@ -2368,6 +2368,359 @@ impl i256 {
     pub const fn pow(self, exp: u32) -> Self {
         Self { inner: self.inner.pow_signed(exp) }
     }
+
+    /// Calculates the quotient of Euclidean division `self.div_euclid(rhs)`.
+    /// 
+    /// Returns a tuple of the divisor along with a boolean indicating whether an arithmetic overflow would
+    /// occur. If an overflow would occur then `self` is returned.
+    /// 
+    /// # Panics
+    /// 
+    /// This function will panic if `rhs` is 0.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// 
+    /// assert_eq!(int(-5).overflowing_div_euclid(int(2)), (int(-3), false));
+    /// assert_eq!(int(-5).overflowing_div_euclid(int(-2)), (int(3), false));
+    /// assert_eq!(int(5).overflowing_div_euclid(int(-2)), (int(-2), false));
+    #[doc = concat!("assert_eq!(", typename!(), "::MIN.overflowing_div_euclid(int(-1)), (", typename!(), "::MIN, true));")]
+    /// ```
+    /// ```should_panic
+    /// # use wider_primitives::*;
+    #[doc = concat!("let _ = ", typename!(), "::ONE.overflowing_div_euclid(", typename!(), "::ZERO);")]
+    /// ```
+    pub const fn overflowing_div_euclid(self, rhs: Self) -> (Self, bool) {
+        let (inner, overflows) = self.inner.overflowing_div_euclid(rhs.inner);
+        (Self { inner }, overflows)
+    }
+
+    /// Checked Euclidean division. Computes `self.div_euclid(rhs)`,
+    /// returning `None` if `rhs == 0` or the division results in overflow.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    #[doc = concat!("let max = ", typename!(), "::MAX;")]
+    #[doc = concat!("let min = ", typename!(), "::MIN;")]
+    /// 
+    /// assert_eq!(min.add(int(1)).checked_div_euclid(int(-1)), Some(max));
+    /// assert_eq!(min.checked_div_euclid(int(-1)), None);
+    /// assert_eq!(int(1).checked_div_euclid(int(0)), None);
+    /// ```
+    pub const fn checked_div_euclid(self, rhs: Self) -> Option<Self> {
+        match self.inner.checked_div_euclid(rhs.inner) {
+            Some(inner) => Some(Self { inner }),
+            None => None,
+        }
+    }
+
+    /// Wrapping Euclidean division. Computes `self.div_euclid(rhs)`,
+    /// wrapping around at the boundary of the type.
+    /// 
+    /// Wrapping will only occur in `MIN / -1` on a signed type (where `MIN` is the negative minimal value
+    /// for the type). This is equivalent to `-MIN`, a positive value that is too large to represent in the
+    /// type. In this case, this method returns `MIN` itself.
+    /// 
+    /// # Panics
+    /// 
+    /// This function will panic if `rhs` is 0.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    #[doc = concat!("let min = ", typename!(), "::MIN;")]
+    /// 
+    /// assert_eq!(int(100).wrapping_div_euclid(int(10)), int(10));
+    /// assert_eq!(min.wrapping_div_euclid(int(-1)), min);
+    /// ```
+    /// ```should_panic
+    /// # use wider_primitives::*;
+    #[doc = concat!("let _ = ", typename!(), "::ONE.wrapping_div_euclid(", typename!(), "::ZERO);")]
+    /// ```
+    pub const fn wrapping_div_euclid(self, rhs: Self) -> Self {
+        Self { inner: self.inner.wrapping_div_euclid(rhs.inner) }
+    }
+
+    /// Calculates the quotient of Euclidean division of `self` by `rhs`.
+    /// 
+    /// This computes the integer `q` such that `self = q * rhs + r`, with
+    /// `r = self.rem_euclid(rhs)` and `0 <= r < abs(rhs)`.
+    /// 
+    /// In other words, the result is `self / rhs` rounded to the integer `q`
+    /// such that `self >= q * rhs`.
+    /// If `self > 0`, this is equal to round towards zero (the default in Rust);
+    /// if `self < 0`, this is equal to round towards +/- infinity.
+    /// 
+    /// # Panics
+    /// 
+    /// This function will panic if `rhs` is 0 or the division results in overflow.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// 
+    /// assert_eq!(int(7).div_euclid(int(4)), int(1));
+    /// assert_eq!(int(7).div_euclid(int(-4)), int(-1));
+    /// assert_eq!(int(-7).div_euclid(int(4)), int(-2));
+    /// assert_eq!(int(-7).div_euclid(int(-4)), int(2));
+    /// ```
+    /// ```should_panic
+    /// # use wider_primitives::*;
+    #[doc = concat!("let _ = ", typename!(), "::MIN.div_euclid(", typename!(), "::MINUS_ONE);")]
+    /// ```
+    pub const fn div_euclid(self, rhs: Self) -> Self {
+        Self { inner: self.inner.div_euclid(rhs.inner) }
+    }
+
+    /// Overflowing Euclidean remainder. Calculates `self.rem_euclid(rhs)`.
+    /// 
+    /// Returns a tuple of the remainder after dividing along with a boolean indicating whether an
+    /// arithmetic overflow would occur. If an overflow would occur then 0 is returned.
+    /// 
+    /// # Panics
+    /// 
+    /// This function will panic if `rhs` is 0.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// 
+    /// assert_eq!(int(-5).overflowing_rem_euclid(int(2)), (int(1), false));
+    /// assert_eq!(int(-5).overflowing_rem_euclid(int(-2)), (int(1), false));
+    /// assert_eq!(int(5).overflowing_rem_euclid(int(-2)), (int(1), false));
+    #[doc = concat!("assert_eq!(", typename!(), "::MIN.overflowing_rem_euclid(int(-1)), (", typename!(), "::ZERO, true));")]
+    /// ```
+    /// ```should_panic
+    /// # use wider_primitives::*;
+    #[doc = concat!("let _ = ", typename!(), "::ONE.overflowing_rem_euclid(", typename!(), "::ZERO);")]
+    /// ```
+    pub const fn overflowing_rem_euclid(self, rhs: Self) -> (Self, bool) {
+        let (inner, overflows) = self.inner.overflowing_rem_euclid(rhs.inner);
+        (Self { inner }, overflows)
+    }
+
+    /// Checked Euclidean remainder. Computes `self.rem_euclid(rhs)`, returning `None`
+    /// if `rhs == 0` or the division results in overflow.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// 
+    /// assert_eq!(int(5).checked_rem_euclid(int(2)), Some(int(1)));
+    /// assert_eq!(int(5).checked_rem_euclid(int(0)), None);
+    #[doc = concat!("assert_eq!(", typename!(), "::MIN.checked_rem_euclid(int(-1)), None);")]
+    /// ```
+    pub const fn checked_rem_euclid(self, rhs: Self) -> Option<Self> {
+        match self.inner.checked_rem_euclid(rhs.inner) {
+            Some(inner) => Some(Self { inner }),
+            None => None,
+        }
+    }
+
+    /// Wrapping Euclidean remainder. Computes `self.rem_euclid(rhs)`, wrapping around
+    /// at the boundary of the type.
+    /// 
+    /// Wrapping will only occur in `MIN % -1` on a signed type (where `MIN` is the negative minimal value
+    /// for the type). In this case, this method returns 0.
+    /// 
+    /// # Panics
+    /// 
+    /// This function will panic if `rhs` is 0.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    #[doc = concat!("let min = ", typename!(), "::MIN;")]
+    /// 
+    /// assert_eq!(int(100).wrapping_rem_euclid(int(10)), int(0));
+    /// assert_eq!(min.wrapping_rem_euclid(int(-1)), int(0));
+    /// ```
+    /// ```should_panic
+    /// # use wider_primitives::*;
+    #[doc = concat!("let _ = ", typename!(), "::ONE.wrapping_rem_euclid(", typename!(), "::ZERO);")]
+    /// ```
+    pub const fn wrapping_rem_euclid(self, rhs: Self) -> Self {
+        Self { inner: self.inner.wrapping_rem_euclid(rhs.inner) }
+    }
+
+    /// Calculates the least nonnegative remainder of `self (mod rhs)`.
+    /// 
+    /// This is done as if by the Euclidean division algorithm -- given
+    /// `r = self.rem_euclid(rhs)`, `self = rhs * self.div_euclid(rhs) + r`, and
+    /// `0 <= r < abs(rhs)`.
+    /// 
+    /// # Panics
+    /// 
+    /// This function will panic if `rhs` is 0 or the division results in overflow.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// 
+    /// assert_eq!(int(7).rem_euclid(int(4)), int(3));
+    /// assert_eq!(int(7).rem_euclid(int(-4)), int(3));
+    /// assert_eq!(int(-7).rem_euclid(int(4)), int(1));
+    /// assert_eq!(int(-7).rem_euclid(int(-4)), int(1));
+    /// ```
+    /// ```should_panic
+    /// # use wider_primitives::*;
+    #[doc = concat!("let _ = ", typename!(), "::MIN.rem_euclid(", typename!(), "::MINUS_ONE);")]
+    /// ```
+    pub const fn rem_euclid(self, rhs: Self) -> Self {
+        Self { inner: self.inner.rem_euclid(rhs.inner) }
+    }
+
+    /// Calculates the Euclidean quotient and remainder when `self` is divided by `rhs`.
+    /// Returns a tuple of the quotient and remainder along with a boolean
+    /// indicating whether an arithmetic overflow would occur.
+    /// If an overflow would occur then the wrapped value is returned.
+    /// 
+    /// # Panics
+    /// 
+    /// This function will panic if `rhs == 0`.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// 
+    /// assert_eq!(int(-5).overflowing_divrem_euclid(int(2)), (int(-3), int(1), false));
+    /// assert_eq!(int(-5).overflowing_divrem_euclid(int(-2)), (int(3), int(1), false));
+    /// assert_eq!(int(5).overflowing_divrem_euclid(int(-2)), (int(-2), int(1), false));
+    #[doc = concat!("assert_eq!(", typename!(), "::MIN.overflowing_divrem_euclid(int(-1)), (", typename!(), "::MIN, ", typename!(), "::ZERO, true));")]
+    /// ```
+    /// ```should_panic
+    /// # use wider_primitives::*;
+    #[doc = concat!("let _ = ", typename!(), "::ONE.overflowing_divrem_euclid(", typename!(), "::ZERO);")]
+    /// ```
+    pub const fn overflowing_divrem_euclid(self, rhs: Self) -> (Self, Self, bool) {
+        let (quot, rem, overflows) = self.inner.overflowing_divrem_euclid(rhs.inner);
+        (Self { inner: quot }, Self { inner: rem }, overflows)
+    }
+
+    /// Checked Euclidean division. Computes `self.divrem_euclid(rhs)`,
+    /// returning `None` if `rhs == 0` or the division results in overflow.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    #[doc = concat!("let max = ", typename!(), "::MAX;")]
+    #[doc = concat!("let min = ", typename!(), "::MIN;")]
+    /// 
+    /// assert_eq!(min.add(int(1)).checked_divrem_euclid(int(-1)), Some((max, int(0))));
+    /// assert_eq!(min.checked_divrem_euclid(int(-1)), None);
+    /// assert_eq!(int(1).checked_divrem_euclid(int(0)), None);
+    /// ```
+    pub const fn checked_divrem_euclid(self, rhs: Self) -> Option<(Self, Self)> {
+        match self.inner.checked_divrem_euclid(rhs.inner) {
+            Some((quot, rem)) => Some((Self { inner: quot }, Self { inner: rem })),
+            None => None,
+        }
+    }
+
+    /// Wrapping Euclidean division. Computes `self.divrem_euclid(rhs)`,
+    /// wrapping around at the boundary of the type.
+    /// 
+    /// Wrapping will only occur in `MIN / -1` on a signed type (where `MIN` is the negative minimal value
+    /// for the type). This is equivalent to `-MIN`, a positive value that is too large to represent in the
+    /// type. In this case, this method returns `MIN` itself.
+    /// 
+    /// # Panics
+    /// 
+    /// This function will panic if `rhs` is 0.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    #[doc = concat!("let min = ", typename!(), "::MIN;")]
+    /// 
+    /// assert_eq!(int(100).wrapping_divrem_euclid(int(10)), (int(10), int(0)));
+    /// assert_eq!(min.wrapping_divrem_euclid(int(-1)), (min, int(0)));
+    /// ```
+    /// ```should_panic
+    /// # use wider_primitives::*;
+    #[doc = concat!("let _ = ", typename!(), "::ONE.wrapping_divrem_euclid(", typename!(), "::ZERO);")]
+    /// ```
+    pub const fn wrapping_divrem_euclid(mut self, mut rhs: Self) -> (Self, Self) {
+        (self.inner, rhs.inner) = self.inner.wrapping_divrem_euclid(rhs.inner);
+        (self, rhs)
+    }
+
+    /// Calculates the Euclidean quotient and remainder when `self` is divided by `rhs`.
+    /// 
+    /// Slightly more efficient variant of `(self.div_euclid(rhs), self.rem_euclid(rhs))`
+    /// provided for convenience.
+    /// 
+    /// # Panics
+    /// 
+    /// This function will panic if `rhs` is 0 or the division results in overflow.
+    /// 
+    /// # Examples
+    /// 
+    /// Basic usage:
+    /// 
+    /// ```
+    /// # use wider_primitives::*;
+    #[doc = concat!("let int = ", typename!(), "::from_i64;")]
+    /// 
+    /// assert_eq!(int(7).divrem_euclid(int(4)), (int(1), int(3)));
+    /// assert_eq!(int(7).divrem_euclid(int(-4)), (int(-1), int(3)));
+    /// assert_eq!(int(-7).divrem_euclid(int(4)), (int(-2), int(1)));
+    /// assert_eq!(int(-7).divrem_euclid(int(-4)), (int(2), int(1)));
+    /// ```
+    /// ```should_panic
+    /// # use wider_primitives::*;
+    #[doc = concat!("let _ = ", typename!(), "::MIN.divrem_euclid(", typename!(), "::MINUS_ONE);")]
+    /// ```
+    pub const fn divrem_euclid(self, rhs: Self) -> (Self, Self) {
+        let (quot, rem) = self.inner.divrem_euclid(rhs.inner);
+        (Self { inner: quot }, Self { inner: rem })
+    }
 }
 
 /// # Bit manipulation
