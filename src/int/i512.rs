@@ -1561,7 +1561,7 @@ impl i512 {
     #[doc = concat!("let int = ", typename!(), "::from_i64;")]
     /// 
     /// assert_eq!(int(8).short_rem(3), 2);
-    /// assert_eq!(int(8).short_rem(-3), -2);
+    /// assert_eq!(int(8).short_rem(-3), 2);
     /// ```
     /// ```should_panic
     /// # use wider_primitives::*;
@@ -1690,7 +1690,7 @@ impl i512 {
     #[doc = concat!("let int = ", typename!(), "::from_i64;")]
     /// 
     /// assert_eq!(int(8).rem(int(3)), int(2));
-    /// assert_eq!(int(8).rem(int(-3)), int(-2));
+    /// assert_eq!(int(8).rem(int(-3)), int(2));
     /// ```
     /// ```should_panic
     /// # use wider_primitives::*;
@@ -2153,7 +2153,7 @@ impl i512 {
     #[doc = concat!("let int = ", typename!(), "::from_i64;")]
     /// 
     /// assert_eq!(int(8).short_divrem(3), (int(2), 2));
-    /// assert_eq!(int(8).short_divrem(-3), (int(-2), -2));
+    /// assert_eq!(int(8).short_divrem(-3), (int(-2), 2));
     /// ```
     /// ```should_panic
     /// # use wider_primitives::*;
@@ -2287,7 +2287,7 @@ impl i512 {
     #[doc = concat!("let int = ", typename!(), "::from_i64;")]
     /// 
     /// assert_eq!(int(8).divrem(int(3)), (int(2), int(2)));
-    /// assert_eq!(int(8).divrem(int(-3)), (int(-2), int(-2)));
+    /// assert_eq!(int(8).divrem(int(-3)), (int(-2), int(2)));
     /// ```
     /// ```should_panic
     /// # use wider_primitives::*;

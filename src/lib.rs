@@ -1037,6 +1037,8 @@ impl<const N: usize> Repr<N> {
         let mut rem = rem as i128;
         if self.is_negative() {
             quot = quot.wrapping_neg();
+        }
+        if self.is_negative() {
             rem = rem.wrapping_neg();
         }
         (quot, rem)
@@ -1047,6 +1049,8 @@ impl<const N: usize> Repr<N> {
         let mut rem = rem as i64;
         if self.is_negative() ^ rhs.is_negative() {
             quot = quot.wrapping_neg();
+        }
+        if self.is_negative() {
             rem = rem.wrapping_neg();
         }
         (quot, rem, self.is_negative() && rhs.is_negative() && quot.is_negative())
@@ -1085,6 +1089,8 @@ impl<const N: usize> Repr<N> {
         let (mut quot, mut rem) = self.unsigned_abs().divrem_unsigned(rhs.unsigned_abs());
         if self.is_negative() ^ rhs.is_negative() {
             quot = quot.wrapping_neg();
+        }
+        if self.is_negative() {
             rem = rem.wrapping_neg();
         }
         (quot, rem, self.is_negative() && rhs.is_negative() && quot.is_negative())
