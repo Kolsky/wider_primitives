@@ -32,6 +32,9 @@ pub use int::i384;
 #[doc(inline)]
 pub use int::i512;
 
+#[cfg(serde)]
+pub mod serde;
+
 enum UnaryBitOp {
     Clear = 0,
     #[allow(unused)]

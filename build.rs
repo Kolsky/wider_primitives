@@ -7,5 +7,6 @@ fn main() {
         stable: { not(unstable) },
         debug: { debug_assertions },
         release: { not(debug_assertions) },
+        serde: { feature = "serde" },
     }
 }
