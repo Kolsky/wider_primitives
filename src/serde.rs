@@ -1,4 +1,5 @@
-//! Serialization and deserialization, coupled with extra modules (traits, to be more specific) for use in `#[serde(with(_))]`.
+//! Serialization and deserialization, coupled with extra modules (traits, to be more specific)
+//! for use in `serde(with(_))` field attribute.
 
 use core::fmt;
 use core::fmt::Write;
@@ -429,7 +430,7 @@ impl DefaultModule for i512 {}
 /// # Generic parameters
 /// 
 /// * `SIGN_AWARE` -- permit an optional sign. Only affects deserialization for unsigned types,
-/// but signed ones are serialized differently as well, as if they were cast to unsigned type of the same size.
+/// but signed ones are also serialized differently, as if they were cast to unsigned type of the same size.
 /// Disabled by default.
 /// 
 /// * `UPPER_HEX` -- use uppercase hexadecimal characters for serialization. Disabled by default (lowercase preferred).

@@ -12,6 +12,10 @@ Shows publicly available `doc(hidden)` modules, exports, items, methods, functio
 
 Enables nightly support. Currently makes all impls related to [`ops`](https://doc.rust-lang.org/core/ops/index.html), [`cmp`](https://doc.rust-lang.org/core/cmp/index.html), [`From`](https://doc.rust-lang.org/core/convert/trait.From.html) and [`FromStr`](https://doc.rust-lang.org/core/str/trait.FromStr.html) const. You would also need to manually specify the list of nightly features used inside your crate or a library, such as `const_trait_impl` and `const_mut_refs`.
 
+## serde
+
+Enables serde support.
+
 # The minimum supported rust version (MSRV)
 
 If there is any good reason to use the latest stable release for upcoming updates, then expect it to be used in a next major bump. A table below shall track the history of such occurences.

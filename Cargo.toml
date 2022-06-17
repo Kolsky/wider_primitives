@@ -6,6 +6,10 @@ edition = "2021"
 repository = "https://github.com/Kolsky/wider_primitives"
 license = "MIT OR Apache-2.0"
 
+[package.metadata.docs.rs]
+rustdoc-args = ["--cfg", "doc"]
+features = ["serde"]
+
 [dependencies]
 serde = { version = "1.0", default-features = false, optional = true }
 
