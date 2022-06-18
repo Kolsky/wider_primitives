@@ -1,5 +1,5 @@
 #![doc = include_str!("../README.md")]
-#![cfg_attr(doc, feature(doc_cfg))]
+#![cfg_attr(docsrs, feature(doc_cfg))]
 #![cfg_attr(not(test), no_std)]
 #![cfg_attr(unstable, feature(const_mut_refs))]
 #![cfg_attr(unstable, feature(const_trait_impl))]
@@ -33,8 +33,8 @@ pub use int::i384;
 #[doc(inline)]
 pub use int::i512;
 
-#[cfg(any(serde, doc))]
-#[cfg_attr(doc, doc(cfg(feature = "serde")))]
+#[cfg(any(serde, docsrs))]
+#[cfg_attr(docsrs, doc(cfg(feature = "serde")))]
 pub mod serde;
 
 enum UnaryBitOp {

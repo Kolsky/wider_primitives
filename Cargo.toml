@@ -7,7 +7,7 @@ repository = "https://github.com/Kolsky/wider_primitives"
 license = "MIT OR Apache-2.0"
 
 [package.metadata.docs.rs]
-rustdoc-args = ["--cfg", "doc"]
+rustdoc-args = ["--cfg", "docsrs"]
 features = ["serde"]
 
 [dependencies]
