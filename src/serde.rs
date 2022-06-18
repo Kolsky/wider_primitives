@@ -477,6 +477,24 @@ impl<const SIGN_AWARE: bool, const UPPER_HEX: bool, const STRICT: bool> HexStr<S
 
 impl<const SIGN_AWARE: bool, const UPPER_HEX: bool, const STRICT: bool> HexStr<SIGN_AWARE, UPPER_HEX, STRICT> for i512 {}
 
+/// Trait alias helper for HexStr with default parameters. An escape hatch for [current limitations](https://github.com/rust-lang/rust/blob/1b7c3bcef9dc88e65c4914887071e432436a0b04/src/test/ui/const-generics/defaults/doesnt_infer.rs).
+pub trait HexStrDefault: HexStr {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where S: Serializer,
+    {
+        HexStr::serialize(self, serializer)
+    }
+    
+    fn deserialize<'de, D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        HexStr::deserialize(deserializer)
+    }
+}
+
+impl<H: HexStr> HexStrDefault for H {}
+
 struct DecVisitor<S>(PhantomData<S>);
 
 impl<'de, S: Serde> Visitor<'de> for DecVisitor<S> {
