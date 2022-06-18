@@ -17,9 +17,13 @@ use crate::int::*;
 use crate::ParseIntError;
 
 #[cfg_attr(hide_internal, doc(hidden))]
-pub trait Serde: Sized + fmt::Display + fmt::LowerHex + fmt::UpperHex {
+pub trait Serde: Sized + Copy + fmt::Display + fmt::LowerHex + fmt::UpperHex {
     const SIGNED: bool;
     const BITS: u32;
+
+    fn is_negative(self) -> bool { false }
+
+    fn wrapping_abs(self) -> Self { self }
 
     fn as_ref_inner(&self) -> &[u64];
 
@@ -112,6 +116,14 @@ impl Serde for i256 {
 
     const BITS: u32 = Self::BITS;
 
+    fn is_negative(self) -> bool {
+        self.is_negative()
+    }
+
+    fn wrapping_abs(self) -> Self {
+        self.wrapping_abs()
+    }
+
     fn as_ref_inner(&self) -> &[u64] {
         &self.inner.inner
     }
@@ -140,6 +152,14 @@ impl Serde for i384 {
 
     const BITS: u32 = Self::BITS;
 
+    fn is_negative(self) -> bool {
+        self.is_negative()
+    }
+
+    fn wrapping_abs(self) -> Self {
+        self.wrapping_abs()
+    }
+
     fn as_ref_inner(&self) -> &[u64] {
         &self.inner.inner
     }
@@ -167,6 +187,14 @@ impl Serde for i512 {
     const SIGNED: bool = Self::MIN.lt(Self::ZERO);
 
     const BITS: u32 = Self::BITS;
+    
+    fn is_negative(self) -> bool {
+        self.is_negative()
+    }
+
+    fn wrapping_abs(self) -> Self {
+        self.wrapping_abs()
+    }
 
     fn as_ref_inner(&self) -> &[u64] {
         &self.inner.inner
@@ -440,14 +468,12 @@ pub trait HexStr<const SIGN_AWARE: bool = false, const UPPER_HEX: bool = false, 
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
         where S: Serializer,
     {
-        let slice = self.as_ref_inner();
+        let disp = HexDisplay::<_, SIGN_AWARE, UPPER_HEX>(*self);
+        let slice = disp.0.as_ref_inner();
         match slice.len() {
-            4 if UPPER_HEX => ByteBuf::<65>::fmt_value(|buf| write!(buf, "{:X}", self), serializer),
-            6 if UPPER_HEX => ByteBuf::<97>::fmt_value(|buf| write!(buf, "{:X}", self), serializer),
-            8 if UPPER_HEX => ByteBuf::<129>::fmt_value(|buf| write!(buf, "{:X}", self), serializer),
-            4 => ByteBuf::<65>::fmt_value(|buf| write!(buf, "{:x}", self), serializer),
-            6 => ByteBuf::<97>::fmt_value(|buf| write!(buf, "{:x}", self), serializer),
-            8 => ByteBuf::<129>::fmt_value(|buf| write!(buf, "{:x}", self), serializer),
+            4 => ByteBuf::<65>::fmt_value(|buf| write!(buf, "{}", disp), serializer),
+            6 => ByteBuf::<97>::fmt_value(|buf| write!(buf, "{}", disp), serializer),
+            8 => ByteBuf::<129>::fmt_value(|buf| write!(buf, "{}", disp), serializer),
             _ => Err(ser::Error::custom("not implemented")),
         }
     }
@@ -508,6 +534,22 @@ impl<'de, S: Serde> Visitor<'de> for DecVisitor<S> {
         where E: serde::de::Error,
     {
         S::from_str(v).map_err(de::Error::custom)
+    }
+}
+
+struct HexDisplay<S, const SIGN_AWARE: bool, const UPPER_HEX: bool>(S);
+
+impl<S: Serde, const SIGN_AWARE: bool, const UPPER_HEX: bool> fmt::Display for HexDisplay<S, SIGN_AWARE, UPPER_HEX> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        if SIGN_AWARE && self.0.is_negative() {
+            f.write_char('-')?;
+        }
+        match (SIGN_AWARE, UPPER_HEX) {
+            (false, false) => fmt::LowerHex::fmt(&self.0, f),
+            (false, true) => fmt::UpperHex::fmt(&self.0, f),
+            (true, false) => fmt::LowerHex::fmt(&self.0.wrapping_abs(), f),
+            (true, true) => fmt::UpperHex::fmt(&self.0.wrapping_abs(), f),
+        }
     }
 }
 
