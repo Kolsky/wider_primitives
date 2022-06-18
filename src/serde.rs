@@ -1,5 +1,5 @@
 //! Serialization and deserialization, coupled with extra modules (traits, to be more specific)
-//! for use in `serde(with(_))` field attribute.
+//! for use in `serde(with = "path")` field attribute.
 
 use core::fmt;
 use core::fmt::Write;
@@ -418,7 +418,7 @@ impl InnerArray for i384 {}
 
 impl InnerArray for i512 {}
 
-/// Serialize and deserialize integer as a decimal string with human readable formats and as inner array in other cases.
+/// Serialize and deserialize integer as a decimal string for human readable formats and as inner array for other cases.
 /// Used by implementations of [`Serialize`] and [`Deserialize`].
 pub trait DefaultModule: DecStr + InnerArray {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
