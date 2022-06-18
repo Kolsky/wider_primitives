@@ -1,3 +1,9 @@
+# 0.0.7
+
+- Added feature for optional serde support.
+
+- Added doc_cfg to docs.rs build.
+
 # 0.0.6
 
 - Fixed incorrect integer formatting across most implemented fmt traits (Debug is fine and unchanged).
